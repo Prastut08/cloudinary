@@ -12,12 +12,16 @@ import Processing from './pages/Processing';
 import ProductDetails from './pages/ProductDetails';
 import ProductsList from './pages/ProductsList';
 import AssetLibrary from './pages/AssetLibrary';
+import ShareProduct from './pages/ShareProduct';
 
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <Routes>
+          {/* Public Share Route */}
+          <Route path="/share/:shareToken" element={<ShareProduct />} />
+
           {/* Public Auth Routes */}
           <Route
             path="/login"

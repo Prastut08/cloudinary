@@ -2,10 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Tag, ShieldCheck, Download, ExternalLink, ArrowLeft, Layers, AlertCircle,
-  Loader2, RefreshCw, CheckCircle2, FileText, Image as ImageIcon, Sparkles, Sliders
+  Loader2, RefreshCw, CheckCircle2, FileText, Image as ImageIcon, Sparkles, Sliders,
+  Share2, Trash2, Edit2, Copy, Check, Eye, X
 } from 'lucide-react';
 import { Button, StatusDot, Badge } from '../components/ui/UI';
-import { fetchProductById, regenerateSingleAsset } from '../services/api';
+import {
+  fetchProductById,
+  regenerateSingleAsset,
+  renameProduct,
+  deleteProduct,
+  createProductShare,
+  toggleProductShareState,
+  deleteSingleAsset,
+  downloadProductZipArchive
+} from '../services/api';
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -17,10 +27,29 @@ export default function ProductDetails() {
   const [regeneratingKey, setRegeneratingKey] = useState(null);
   const [compareCrop, setCompareCrop] = useState('transparent');
 
+  // Interactive Management State
+  const [isRenameOpen, setIsRenameOpen] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [isRenaming, setIsRenaming] = useState(false);
+
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const [shareUrl, setShareUrl] = useState(null);
+  const [isSharing, setIsSharing] = useState(false);
+  const [copiedShare, setCopiedShare] = useState(false);
+  const [isShareDisabled, setIsShareDisabled] = useState(false);
+
+  const [deletingAssetKey, setDeletingAssetKey] = useState(null);
+  const [isDownloadingZip, setIsDownloadingZip] = useState(false);
+
   useEffect(() => {
     fetchProductById(id)
       .then((res) => {
-        if (res && res.data) setProduct(res.data);
+        if (res && res.data) {
+          setProduct(res.data);
+          setNewName(res.data.name);
+        }
       })
       .catch((err) => setError(err.message || 'Could not load product details.'))
       .finally(() => setLoading(false));
@@ -31,13 +60,12 @@ export default function ProductDetails() {
     try {
       const res = await regenerateSingleAsset(id, variantKey);
       if (res && res.url) {
-        // Update product asset URL locally in state
         setProduct((prev) => {
           if (!prev) return prev;
           const newPacks = { ...prev.assets };
           Object.keys(newPacks).forEach((packKey) => {
             newPacks[packKey] = newPacks[packKey].map((ast) => {
-              if (ast.type === variantKey || ast.title.toLowerCase().includes(variantKey.toLowerCase())) {
+              if (ast.type === variantKey) {
                 return { ...ast, url: `${res.url}&t=${Date.now()}` };
               }
               return ast;
@@ -47,9 +75,89 @@ export default function ProductDetails() {
         });
       }
     } catch (err) {
-      console.error('Regenerate asset failed:', err);
+      alert(err.message || 'Regenerate asset failed');
     } finally {
       setRegeneratingKey(null);
+    }
+  };
+
+  const handleRenameSubmit = async (e) => {
+    e.preventDefault();
+    if (!newName.trim()) return;
+    setIsRenaming(true);
+    try {
+      await renameProduct(id, newName.trim());
+      setProduct((prev) => (prev ? { ...prev, name: newName.trim() } : prev));
+      setIsRenameOpen(false);
+    } catch (err) {
+      alert(err.message || 'Failed to rename product');
+    } finally {
+      setIsRenaming(false);
+    }
+  };
+
+  const handleDeleteSubmit = async () => {
+    setIsDeleting(true);
+    try {
+      await deleteProduct(id);
+      navigate('/products');
+    } catch (err) {
+      alert(err.message || 'Failed to delete product');
+      setIsDeleting(false);
+    }
+  };
+
+  const handleShareProduct = async () => {
+    setIsSharing(true);
+    try {
+      const res = await createProductShare(id);
+      if (res && res.shareUrl) {
+        setShareUrl(res.shareUrl);
+        setIsShareDisabled(false);
+        navigator.clipboard.writeText(res.shareUrl);
+        setCopiedShare(true);
+        setTimeout(() => setCopiedShare(false), 3000);
+      }
+    } catch (err) {
+      alert(err.message || 'Failed to generate share link');
+    } finally {
+      setIsSharing(false);
+    }
+  };
+
+  const handleToggleShare = async () => {
+    const nextState = !isShareDisabled;
+    try {
+      await toggleProductShareState(id, !nextState);
+      setIsShareDisabled(nextState);
+    } catch (err) {
+      alert(err.message || 'Failed to toggle share state');
+    }
+  };
+
+  const handleDownloadZip = async () => {
+    setIsDownloadingZip(true);
+    try {
+      await downloadProductZipArchive(id, product?.name || 'product');
+    } catch (err) {
+      alert(err.message || 'Failed to download ZIP archive');
+    } finally {
+      setIsDownloadingZip(false);
+    }
+  };
+
+  const handleDeleteAssetVariant = async (variantKey) => {
+    if (!window.confirm(`Are you sure you want to delete the ${variantKey} asset variant?`)) return;
+    setDeletingAssetKey(variantKey);
+    try {
+      const res = await deleteSingleAsset(id, variantKey);
+      if (res && res.assets) {
+        setProduct((prev) => (prev ? { ...prev, assets: res.assets } : prev));
+      }
+    } catch (err) {
+      alert(err.message || 'Failed to delete asset variant');
+    } finally {
+      setDeletingAssetKey(null);
     }
   };
 
@@ -70,8 +178,8 @@ export default function ProductDetails() {
           <h3 className="text-sm font-bold text-neutral-900">Product Not Found</h3>
           <p className="text-xs text-neutral-500 mt-1">{error || 'This product does not exist or has been deleted.'}</p>
         </div>
-        <Button onClick={() => navigate('/')} variant="secondary" size="sm">
-          Return to Dashboard
+        <Button onClick={() => navigate('/products')} variant="secondary" size="sm">
+          Back to Library
         </Button>
       </div>
     );
@@ -91,9 +199,14 @@ export default function ProductDetails() {
     ? analysis.tags.map((t) => (typeof t === 'string' ? t : t.name))
     : [];
 
+  const totalAssetsCount =
+    ecommerceAssets.length + socialAssets.length + webAssets.length + (originalUrl ? 1 : 0);
+
   const compareImageSrc =
     compareCrop === 'transparent'
       ? ecommerceAssets.find((a) => a.type === 'transparent-product')?.url || originalUrl
+      : compareCrop === 'heroCutout'
+      ? webAssets.find((a) => a.type === 'websiteLandscape')?.url || originalUrl
       : compareCrop === 'square'
       ? crops.square || originalUrl
       : compareCrop === 'portrait'
@@ -102,31 +215,111 @@ export default function ProductDetails() {
 
   return (
     <div className="space-y-8">
-      {/* Top Navigation */}
-      <div className="flex items-center justify-between border-b border-neutral-200 pb-4">
-        <button
-          onClick={() => navigate('/')}
-          className="inline-flex items-center space-x-1.5 text-xs text-neutral-500 hover:text-neutral-900 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back to Catalog</span>
-        </button>
-
+      {/* Top Navigation & Action Controls */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-200 pb-4">
         <div className="flex items-center space-x-3">
-          <Badge
-            variant={
-              readinessStatus === 'READY'
-                ? 'success'
-                : readinessStatus === 'NEEDS REVIEW'
-                ? 'warning'
-                : 'default'
-            }
+          <button
+            onClick={() => navigate('/products')}
+            className="inline-flex items-center space-x-1.5 text-xs text-neutral-500 hover:text-neutral-900 transition-colors"
           >
-            Commerce Readiness: {readinessStatus} ({readinessScore}/100)
-          </Badge>
-          <StatusDot status={product.processingStatus || 'completed'} />
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back to Library</span>
+          </button>
+          <span className="text-neutral-300">|</span>
+          <span className="text-xs font-mono text-neutral-400">ID: {product.id || id}</span>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            onClick={handleDownloadZip}
+            disabled={isDownloadingZip}
+            variant="primary"
+            size="sm"
+            className="gap-1.5"
+          >
+            {isDownloadingZip ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <span>Preparing ZIP ({totalAssetsCount} assets)...</span>
+              </>
+            ) : (
+              <>
+                <Download className="w-3.5 h-3.5" />
+                <span>Download All Assets ({totalAssetsCount})</span>
+              </>
+            )}
+          </Button>
+
+          <Button
+            onClick={handleShareProduct}
+            disabled={isSharing}
+            variant="secondary"
+            size="sm"
+            className="gap-1.5"
+          >
+            {copiedShare ? (
+              <>
+                <Check className="w-3.5 h-3.5 text-emerald-600" />
+                <span className="text-emerald-700 font-semibold">Share Link Copied!</span>
+              </>
+            ) : (
+              <>
+                <Share2 className="w-3.5 h-3.5 text-neutral-500" />
+                <span>Share Product Showcase</span>
+              </>
+            )}
+          </Button>
+
+          {shareUrl && (
+            <Button
+              onClick={handleToggleShare}
+              variant="secondary"
+              size="sm"
+            >
+              {isShareDisabled ? 'Enable Sharing' : 'Disable Sharing'}
+            </Button>
+          )}
+
+          <Button
+            onClick={() => setIsRenameOpen(true)}
+            variant="secondary"
+            size="sm"
+            className="gap-1.5"
+          >
+            <Edit2 className="w-3.5 h-3.5 text-neutral-500" />
+            <span>Rename</span>
+          </Button>
+
+          <button
+            onClick={() => setIsDeleteOpen(true)}
+            className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded border border-red-200 text-xs font-medium text-red-600 bg-white hover:bg-red-50 transition-colors"
+          >
+            <Trash2 className="w-3.5 h-3.5 text-red-500" />
+            <span>Delete Product</span>
+          </button>
         </div>
       </div>
+
+      {/* Share Link Banner */}
+      {shareUrl && (
+        <div className="bg-emerald-50 border border-emerald-200 rounded p-4 flex items-center justify-between text-xs text-emerald-900">
+          <div className="flex items-center space-x-2 truncate">
+            <Share2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span className="font-semibold shrink-0">Public Share URL:</span>
+            <span className="font-mono text-emerald-700 truncate">{shareUrl}</span>
+          </div>
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(shareUrl);
+              setCopiedShare(true);
+              setTimeout(() => setCopiedShare(false), 2000);
+            }}
+            className="px-2.5 py-1 bg-white border border-emerald-300 rounded font-medium text-emerald-800 hover:bg-emerald-100 shrink-0"
+          >
+            {copiedShare ? 'Copied!' : 'Copy Link'}
+          </button>
+        </div>
+      )}
 
       {/* Overview Header Card */}
       <div className="bg-white border border-neutral-200 rounded p-6">
@@ -140,7 +333,9 @@ export default function ProductDetails() {
                 <h1 className="text-lg font-bold text-neutral-900 tracking-tight">{product.name}</h1>
                 <Badge variant="neutral">{product.category}</Badge>
               </div>
-              <p className="text-xs text-neutral-400 font-mono mt-1">ID: {product.id || id}</p>
+              <p className="text-xs text-neutral-400 font-mono mt-1">
+                Generated Assets: <span className="font-semibold text-neutral-800">{totalAssetsCount} available</span>
+              </p>
               <p className="text-xs text-neutral-500 mt-1">
                 Cloudinary Public ID: <span className="font-mono text-neutral-700">{product.originalAsset?.publicId || 'N/A'}</span>
               </p>
@@ -156,13 +351,16 @@ export default function ProductDetails() {
             <h3 className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
               Commerce Readiness
             </h3>
-            <div>
-              <div className="text-2xl font-bold text-neutral-900">{readinessScore} <span className="text-xs text-neutral-400 font-normal">/ 100</span></div>
-              <p className="text-[11px] text-neutral-500 mt-0.5 font-medium">{readinessStatus}</p>
+            <div className="flex items-center space-x-3">
+              <div>
+                <div className="text-2xl font-bold text-neutral-900">{readinessScore} <span className="text-xs text-neutral-400 font-normal">/ 100</span></div>
+                <p className="text-[11px] text-neutral-500 mt-0.5 font-medium">{readinessStatus}</p>
+              </div>
+              <StatusDot status={product.processingStatus || 'completed'} />
             </div>
             <div className="text-[11px] text-neutral-400 space-y-0.5">
-              <p>Format: Automatic (f_auto)</p>
-              <p>Quality: Automatic (q_auto)</p>
+              <p>Composition: Two-Branch Cutout Engine</p>
+              <p>Delivery: Automatic (f_auto, q_auto)</p>
             </div>
           </div>
         </div>
@@ -187,7 +385,7 @@ export default function ProductDetails() {
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-neutral-400 italic">Not available (Google Tagging add-on disabled)</p>
+              <p className="text-xs text-neutral-400 italic font-mono">Not available (Google Tagging add-on disabled)</p>
             )}
           </div>
           <div>
@@ -205,7 +403,7 @@ export default function ProductDetails() {
           <div>
             <span className="text-[11px] text-neutral-400 block mb-1">Focus Quality Rating</span>
             <span className="text-xs font-medium text-neutral-900">
-              {analysis.qualityScore !== null ? `${analysis.qualityScore} / 100 (${analysis.qualityRating})` : 'Good (Standard Cloudinary Ingestion)'}
+              {analysis.qualityScore !== null && analysis.qualityScore !== undefined ? `${analysis.qualityScore} / 100 (${analysis.qualityRating})` : 'Good (Standard Cloudinary Ingestion)'}
             </span>
           </div>
           <div>
@@ -220,7 +418,7 @@ export default function ProductDetails() {
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-neutral-400 italic">Color analysis complete</p>
+              <p className="text-xs text-neutral-400 italic font-mono">Color analysis complete</p>
             )}
           </div>
         </div>
@@ -250,9 +448,9 @@ export default function ProductDetails() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-neutral-100 pb-3">
           <div>
             <h3 className="text-xs font-semibold text-neutral-900 uppercase tracking-wider">
-              Cloudinary Media Transformation Comparison (Before / After)
+              Cloudinary Composition Engine (Before / After)
             </h3>
-            <p className="text-[11px] text-neutral-400 mt-0.5">Real-time comparison between raw master upload and Cloudinary transformations</p>
+            <p className="text-[11px] text-neutral-400 mt-0.5">Compare master lifestyle upload with Cloudinary background cutout compositions</p>
           </div>
           <div className="flex space-x-1 bg-neutral-100 p-0.5 rounded border border-neutral-200 text-xs">
             <button
@@ -262,23 +460,23 @@ export default function ProductDetails() {
               Background Removed
             </button>
             <button
+              onClick={() => setCompareCrop('heroCutout')}
+              className={`px-2.5 py-1 rounded font-medium transition-colors ${compareCrop === 'heroCutout' ? 'bg-white text-neutral-900 shadow-xs' : 'text-neutral-600 hover:text-neutral-900'}`}
+            >
+              Desktop Hero Banner
+            </button>
+            <button
               onClick={() => setCompareCrop('square')}
               className={`px-2.5 py-1 rounded font-medium transition-colors ${compareCrop === 'square' ? 'bg-white text-neutral-900 shadow-xs' : 'text-neutral-600 hover:text-neutral-900'}`}
             >
-              Smart Square (1:1)
-            </button>
-            <button
-              onClick={() => setCompareCrop('portrait')}
-              className={`px-2.5 py-1 rounded font-medium transition-colors ${compareCrop === 'portrait' ? 'bg-white text-neutral-900 shadow-xs' : 'text-neutral-600 hover:text-neutral-900'}`}
-            >
-              Smart Portrait (4:5)
+              Scene Smart Crop
             </button>
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <span className="text-xs font-medium text-neutral-500">Original Master Image</span>
+            <span className="text-xs font-medium text-neutral-500">Original Master Photo</span>
             <div className="aspect-square bg-neutral-100 rounded border border-neutral-200 overflow-hidden flex items-center justify-center p-2">
               <img src={originalUrl} alt="Before" className="max-h-full max-w-full object-contain" />
             </div>
@@ -298,15 +496,15 @@ export default function ProductDetails() {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Layers className="w-4 h-4 text-neutral-500" />
-            <h2 className="text-sm font-bold text-neutral-900">Generated Product Media Asset Packs</h2>
+            <h2 className="text-sm font-bold text-neutral-900">Generated Product Media Asset Packs ({totalAssetsCount})</h2>
           </div>
         </div>
 
         {/* Render Asset Packs */}
         {[
-          { title: 'E-Commerce Channel Assets', items: ecommerceAssets },
-          { title: 'Social Media Platform Assets', items: socialAssets },
-          { title: 'Web & Mobile Responsive Assets', items: webAssets },
+          { title: 'E-Commerce Channel Assets (Cutout Layered Compositions)', items: ecommerceAssets },
+          { title: 'Social Media Platform Assets (Vertical & Square Cutouts)', items: socialAssets },
+          { title: 'Web & Mobile Responsive Assets (Widescreen Hero & Cards)', items: webAssets },
         ].map((pack) => {
           if (!pack.items || pack.items.length === 0) return null;
           return (
@@ -358,6 +556,14 @@ export default function ProductDetails() {
                         >
                           <RefreshCw className={`w-3.5 h-3.5 text-neutral-500 ${regeneratingKey === ast.type ? 'animate-spin' : ''}`} />
                         </button>
+                        <button
+                          onClick={() => handleDeleteAssetVariant(ast.type)}
+                          disabled={deletingAssetKey === ast.type}
+                          className="inline-flex items-center justify-center p-1.5 rounded border border-neutral-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                          title="Delete asset variant"
+                        >
+                          <Trash2 className="w-3.5 h-3.5 text-red-500" />
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -367,6 +573,75 @@ export default function ProductDetails() {
           );
         })}
       </div>
+
+      {/* Rename Dialog */}
+      {isRenameOpen && (
+        <div className="fixed inset-0 z-50 bg-neutral-900/50 flex items-center justify-center p-4">
+          <div className="bg-white border border-neutral-200 rounded-lg p-6 max-w-sm w-full space-y-4 shadow-xl">
+            <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
+              <h3 className="text-xs font-bold text-neutral-900 uppercase">Rename Product</h3>
+              <button onClick={() => setIsRenameOpen(false)} className="text-neutral-400 hover:text-neutral-600">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleRenameSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-medium text-neutral-700 mb-1">
+                  Product Name
+                </label>
+                <input
+                  type="text"
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  className="w-full px-3 py-2 bg-neutral-50 border border-neutral-200 rounded text-xs text-neutral-900 focus:outline-none focus:border-neutral-400"
+                  required
+                  autoFocus
+                />
+              </div>
+
+              <div className="flex justify-end space-x-2 pt-2">
+                <Button type="button" variant="secondary" size="sm" onClick={() => setIsRenameOpen(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit" size="sm" disabled={isRenaming}>
+                  {isRenaming ? 'Saving...' : 'Save'}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      {isDeleteOpen && (
+        <div className="fixed inset-0 z-50 bg-neutral-900/50 flex items-center justify-center p-4">
+          <div className="bg-white border border-neutral-200 rounded-lg p-6 max-w-sm w-full space-y-4 shadow-xl text-center">
+            <div className="w-10 h-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center mx-auto border border-red-200">
+              <Trash2 className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-neutral-900">Delete "{product.name}"?</h3>
+              <p className="text-xs text-neutral-500 mt-1">
+                This will permanently remove the product and its generated Cloudinary media references.
+              </p>
+            </div>
+
+            <div className="flex justify-center space-x-2 pt-2">
+              <Button variant="secondary" size="sm" onClick={() => setIsDeleteOpen(false)}>
+                Cancel
+              </Button>
+              <button
+                onClick={handleDeleteSubmit}
+                disabled={isDeleting}
+                className="px-4 py-1.5 rounded bg-red-600 text-white text-xs font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
+              >
+                {isDeleting ? 'Deleting...' : 'Delete Product'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
