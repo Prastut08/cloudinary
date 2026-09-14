@@ -13,11 +13,11 @@ const normalizeApiUrl = (envVal) => {
   return str;
 };
 
-const rawBaseUrl = normalizeApiUrl(import.meta.env.VITE_API_URL) || normalizeApiUrl(import.meta.env.VITE_API_BASE_URL) || 'http://localhost:5000';
+const rawBaseUrl = normalizeApiUrl(import.meta.env.VITE_API_URL) || 'http://localhost:5000';
 const API_BASE_URL = rawBaseUrl.endsWith('/api') ? rawBaseUrl : `${rawBaseUrl}/api`;
 
 if (import.meta.env.DEV) {
-  console.log('[API CONFIG]: Normalized API Base URL ->', API_BASE_URL);
+  console.log('[API CONFIG]: Normalized API Base URL (VITE_API_URL) ->', API_BASE_URL);
 }
 
 /**
