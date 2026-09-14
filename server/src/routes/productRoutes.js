@@ -14,6 +14,7 @@ import {
   deleteSingleAsset,
   getPublicShare,
   downloadProductZip,
+  generateSocialMediaFormats,
 } from '../controllers/productController.js';
 
 const router = express.Router();
@@ -53,5 +54,8 @@ router.post('/:id/regenerate-asset', requireAuth, regenerateAsset);
 
 // DELETE /api/products/:id/assets/:variantKey (Requires Bearer token - Delete individual asset variant)
 router.delete('/:id/assets/:variantKey', requireAuth, deleteSingleAsset);
+
+// POST /api/products/:id/social-factory (Requires Bearer token - Generate social media content factory formats)
+router.post('/:id/social-factory', requireAuth, generateSocialMediaFormats);
 
 export default router;
