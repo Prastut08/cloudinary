@@ -56,7 +56,7 @@ export const getSmartCropUrl = (publicId, width = 600, height = 600, crop = 'fil
 export const deleteCloudinaryFolderAssets = async (folderPath) => {
   try {
     await cloudinary.api.delete_resources_by_prefix(folderPath);
-    await cloudinary.api.delete_folder(folderPath).catch(() => {});
+    await cloudinary.api.delete_folder(folderPath).catch(() => { });
   } catch (err) {
     console.warn('[CLOUDINARY DELETION NOTICE]:', err.message);
   }
@@ -72,7 +72,7 @@ export const generatePlatformVariants = (publicId) => {
     // =========================================================================
     // 1. PRODUCT-CENTRIC ASSETS (Cloudinary Cutout Layered Composition)
     // =========================================================================
-    
+
     // Marketplace Square (1000x1000): Product cutout centered on neutral white canvas, 80% scale (l_cutout / c_fit,w_800,h_800 / g_center / b_white)
     marketplaceSquare: cloudinary.url(publicId, {
       transformation: [

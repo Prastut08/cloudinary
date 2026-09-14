@@ -307,3 +307,26 @@ export const downloadProductZipArchive = async (id, productName = 'product') => 
   a.remove();
   window.URL.revokeObjectURL(downloadUrl);
 };
+
+/**
+ * POST /api/products/:id/social-factory
+ * Generate selected or all Smart Social Media Content Factory variants
+ */
+export const generateSocialFormatsAPI = async (id, selectedFormats = []) => {
+  const token = await getIdToken();
+  const response = await fetch(`${API_BASE_URL}/products/${id}/social-factory`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ selectedFormats })
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Failed to generate social media formats.');
+  }
+
+  return response.json();
+};

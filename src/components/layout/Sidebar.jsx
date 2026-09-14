@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Package, Grid, Image, Settings, User, ChevronLeft, ChevronRight, LogOut } from 'lucide-react';
+import { Package, Grid, Image, Settings, User, ChevronLeft, ChevronRight, LogOut, Sparkles } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 export default function Sidebar() {
@@ -21,6 +21,7 @@ export default function Sidebar() {
     { label: 'Dashboard', path: '/', icon: Package },
     { label: 'Products', path: '/products', icon: Grid },
     { label: 'Asset Library', path: '/assets', icon: Image },
+    { label: 'Social Factory', path: '/social-factory', icon: Sparkles },
   ];
 
   return (

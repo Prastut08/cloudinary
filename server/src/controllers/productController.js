@@ -652,7 +652,7 @@ export const deleteProduct = async (req, res, next) => {
     // Clean Cloudinary folder asynchronously
     if (targetPublicId || id) {
       const folderPath = `products/${uid}/${id}`;
-      deleteCloudinaryFolderAssets(folderPath).catch(() => {});
+      deleteCloudinaryFolderAssets(folderPath).catch(() => { });
     }
 
     res.status(200).json({
