@@ -1,6 +1,13 @@
 import { auth } from '../lib/firebase';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+// Centralized API Base URL supporting VITE_API_URL and VITE_API_BASE_URL
+const rawBaseUrl = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+const cleanBaseUrl = rawBaseUrl.replace(/\/+$/, '');
+const API_BASE_URL = cleanBaseUrl.endsWith('/api') ? cleanBaseUrl : `${cleanBaseUrl}/api`;
+
+if (import.meta.env.DEV) {
+  console.log('[API CONFIG]: Centralized API Base URL ->', API_BASE_URL);
+}
 
 /**
  * Get current authenticated user ID token from Firebase Auth
