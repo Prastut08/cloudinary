@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Sparkles, ExternalLink, Download, ArrowLeft, Layers, AlertCircle,
-  Loader2, ShieldCheck, Tag, Copy, Check
+  Loader2, ShieldCheck, Tag, Copy, Check, Flame
 } from 'lucide-react';
 import { fetchPublicShare } from '../services/api';
 
@@ -32,8 +32,8 @@ export default function ShareProduct() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#fafafa] flex items-center justify-center p-6 text-xs text-neutral-500 gap-2">
-        <Loader2 className="w-5 h-5 animate-spin text-neutral-900" />
+      <div className="min-h-screen bg-stone-950 flex items-center justify-center p-6 text-xs text-stone-400 gap-3">
+        <Loader2 className="w-6 h-6 animate-spin text-amber-400" />
         <span>Loading shared product showcase...</span>
       </div>
     );
@@ -41,16 +41,16 @@ export default function ShareProduct() {
 
   if (error || !product) {
     return (
-      <div className="min-h-screen bg-[#fafafa] flex items-center justify-center p-6">
-        <div className="max-w-md w-full bg-white border border-neutral-200 rounded-lg p-8 text-center space-y-4 shadow-sm">
-          <AlertCircle className="w-8 h-8 text-red-500 mx-auto" />
+      <div className="min-h-screen bg-stone-950 flex items-center justify-center p-6 radial-glow-crimson">
+        <div className="max-w-md w-full glass-panel rounded-2xl p-8 text-center space-y-4 shadow-2xl border border-red-900/40">
+          <AlertCircle className="w-8 h-8 text-red-400 mx-auto" />
           <div>
-            <h2 className="text-base font-bold text-neutral-900">Share Link Unavailable</h2>
-            <p className="text-xs text-neutral-500 mt-1">{error || 'This link has expired or does not exist.'}</p>
+            <h2 className="text-base font-bold text-white">Share Link Unavailable</h2>
+            <p className="text-xs text-stone-400 mt-1">{error || 'This link has expired or does not exist.'}</p>
           </div>
           <button
             onClick={() => navigate('/')}
-            className="px-4 py-2 bg-neutral-900 text-white rounded text-xs font-medium hover:bg-neutral-800 transition-colors"
+            className="px-5 py-2.5 luxury-gradient-button text-stone-950 rounded-xl text-xs font-bold uppercase tracking-wider"
           >
             Go to Platform
           </button>
@@ -68,32 +68,32 @@ export default function ShareProduct() {
     : [];
 
   return (
-    <div className="min-h-screen bg-[#fafafa] text-neutral-900">
+    <div className="min-h-screen bg-stone-950 text-stone-100 radial-glow-crimson radial-glow-amber selection:bg-amber-500/30 selection:text-amber-200">
       {/* Top Banner Header */}
-      <header className="bg-white border-b border-neutral-200 sticky top-0 z-30">
+      <header className="border-b border-amber-900/20 bg-stone-950/80 backdrop-blur-xl sticky top-0 z-30">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-7 h-7 rounded bg-neutral-900 text-white flex items-center justify-center font-bold text-xs">
-              AI
+            <div className="w-9 h-9 rounded-xl luxury-gradient-bg flex items-center justify-center text-stone-950 font-bold shadow-lg shadow-amber-500/20">
+              <Flame className="w-5 h-5 text-stone-950" />
             </div>
             <div>
-              <span className="text-xs font-bold tracking-tight text-neutral-900 block">Commerce Content Factory</span>
-              <span className="text-[10px] text-neutral-400 font-mono">Public Asset Showcase</span>
+              <span className="text-sm font-bold luxury-gradient-text tracking-tight block">Content Factory</span>
+              <span className="text-[10px] text-amber-300/90 font-mono uppercase tracking-wider">Public Asset Showcase</span>
             </div>
           </div>
 
           <button
             onClick={handleCopyLink}
-            className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded border border-neutral-200 text-xs font-medium text-neutral-700 bg-white hover:bg-neutral-50 transition-colors"
+            className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl border border-amber-900/30 text-xs font-semibold text-stone-200 bg-stone-900 hover:bg-stone-800 transition-colors"
           >
             {copied ? (
               <>
-                <Check className="w-3.5 h-3.5 text-emerald-600" />
-                <span className="text-emerald-700 font-semibold">Link Copied</span>
+                <Check className="w-4 h-4 text-emerald-400" />
+                <span className="text-emerald-400 font-bold">Link Copied</span>
               </>
             ) : (
               <>
-                <Copy className="w-3.5 h-3.5 text-neutral-500" />
+                <Copy className="w-4 h-4 text-amber-400" />
                 <span>Share Showcase</span>
               </>
             )}
@@ -104,9 +104,9 @@ export default function ShareProduct() {
       {/* Main Content Area */}
       <main className="max-w-6xl mx-auto px-6 py-8 space-y-8">
         {/* Product Hero Header */}
-        <div className="bg-white border border-neutral-200 rounded-lg p-6 shadow-xs">
+        <div className="glass-panel rounded-2xl p-6 border border-amber-900/20">
           <div className="flex flex-col md:flex-row gap-6 items-start">
-            <div className="w-36 h-36 rounded-lg bg-neutral-100 border border-neutral-200 overflow-hidden shrink-0 flex items-center justify-center p-2">
+            <div className="w-36 h-36 rounded-2xl bg-stone-950 border border-amber-900/30 overflow-hidden shrink-0 flex items-center justify-center p-3">
               <img
                 src={product.originalAsset?.url}
                 alt={product.name}
@@ -116,11 +116,11 @@ export default function ShareProduct() {
 
             <div className="space-y-3 flex-1">
               <div>
-                <span className="text-[10px] font-semibold text-neutral-400 uppercase tracking-wider font-mono">
+                <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest font-mono">
                   {product.category || 'Commerce Asset'}
                 </span>
-                <h1 className="text-xl font-bold text-neutral-900 tracking-tight mt-0.5">{product.name}</h1>
-                <p className="text-xs text-neutral-500 mt-1">
+                <h1 className="text-2xl font-extrabold text-white tracking-tight mt-0.5">{product.name}</h1>
+                <p className="text-xs text-stone-400 mt-1">
                   Master image and generated platform variants powered by Cloudinary.
                 </p>
               </div>
@@ -130,7 +130,7 @@ export default function ShareProduct() {
                   {tagsList.map((tag) => (
                     <span
                       key={tag}
-                      className="text-[11px] px-2.5 py-0.5 rounded bg-neutral-100 border border-neutral-200 font-medium text-neutral-700"
+                      className="text-[11px] px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 font-mono"
                     >
                       {tag}
                     </span>
@@ -150,8 +150,8 @@ export default function ShareProduct() {
           if (!pack.items || pack.items.length === 0) return null;
           return (
             <div key={pack.title} className="space-y-4">
-              <div className="border-b border-neutral-200 pb-2">
-                <h2 className="text-xs font-bold text-neutral-900 uppercase tracking-wider">
+              <div className="border-b border-amber-900/20 pb-2">
+                <h2 className="text-xs font-bold text-amber-400 uppercase tracking-widest font-mono">
                   {pack.title}
                 </h2>
               </div>
@@ -160,44 +160,44 @@ export default function ShareProduct() {
                 {pack.items.map((ast, idx) => (
                   <div
                     key={idx}
-                    className="bg-white border border-neutral-200 rounded-lg overflow-hidden flex flex-col justify-between hover:border-neutral-300 transition-colors shadow-xs"
+                    className="glass-card rounded-2xl overflow-hidden flex flex-col justify-between hover:border-amber-500/40 transition-all border border-amber-900/20"
                   >
-                    <div className="aspect-square bg-neutral-100 border-b border-neutral-200 relative overflow-hidden flex items-center justify-center p-3">
+                    <div className="aspect-square bg-stone-950 border-b border-amber-900/20 relative overflow-hidden flex items-center justify-center p-4">
                       <img
                         src={ast.url}
                         alt={ast.title}
                         className="max-h-full max-w-full object-contain"
                       />
-                      <span className="absolute top-2 left-2 text-[10px] font-semibold px-2 py-0.5 rounded bg-neutral-900 text-white">
+                      <span className="absolute top-3 left-3 text-[10px] font-bold px-2.5 py-1 rounded-full bg-stone-900/90 text-amber-300 border border-amber-500/30 backdrop-blur-md">
                         {ast.platform}
                       </span>
                     </div>
 
                     <div className="p-4 space-y-3">
                       <div>
-                        <h3 className="text-xs font-bold text-neutral-900">{ast.title}</h3>
-                        <p className="text-[11px] text-neutral-400 font-mono mt-0.5">
+                        <h3 className="text-sm font-bold text-white">{ast.title}</h3>
+                        <p className="text-[11px] text-stone-400 font-mono mt-0.5">
                           {ast.specs} · {(ast.format || 'jpg').toUpperCase()}
                         </p>
                       </div>
 
-                      <div className="flex items-center space-x-2 pt-2 border-t border-neutral-100">
+                      <div className="flex items-center space-x-2 pt-3 border-t border-amber-900/20">
                         <a
                           href={ast.url}
                           target="_blank"
                           rel="noreferrer"
-                          className="flex-1 inline-flex items-center justify-center space-x-1 py-1.5 px-3 rounded border border-neutral-200 text-[11px] font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
+                          className="flex-1 inline-flex items-center justify-center space-x-1.5 py-2 px-3 rounded-xl border border-amber-900/30 text-xs font-semibold text-stone-300 hover:bg-stone-800 transition-colors"
                         >
-                          <ExternalLink className="w-3 h-3 text-neutral-400" />
+                          <ExternalLink className="w-3.5 h-3.5 text-stone-400" />
                           <span>View Media</span>
                         </a>
                         <a
                           href={ast.url}
                           download
-                          className="inline-flex items-center justify-center p-2 rounded bg-neutral-900 text-white hover:bg-neutral-800 transition-colors"
+                          className="inline-flex items-center justify-center p-2 rounded-xl luxury-gradient-button text-stone-950"
                           title="Download"
                         >
-                          <Download className="w-3.5 h-3.5" />
+                          <Download className="w-4 h-4" />
                         </a>
                       </div>
                     </div>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/ui/UI';
-import { Image, AlertCircle } from 'lucide-react';
+import { AlertCircle, Flame } from 'lucide-react';
 
 export default function Signup() {
   const [email, setEmail] = useState('');
@@ -48,20 +48,26 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-sm bg-white border border-neutral-200 rounded-lg p-6 shadow-xs space-y-6">
-        {/* Brand */}
-        <div className="text-center space-y-2">
-          <div className="w-8 h-8 rounded bg-neutral-900 mx-auto flex items-center justify-center text-white font-semibold text-sm">
-            <Image className="w-4 h-4" />
+    <div className="min-h-screen bg-stone-950 flex items-center justify-center p-4 radial-glow-crimson radial-glow-amber relative overflow-hidden">
+      {/* Background Decorative Blur Orbs */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-amber-600/10 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="w-full max-w-md glass-panel rounded-2xl p-8 shadow-2xl space-y-6 relative z-10 border border-amber-900/30">
+        {/* Brand Header */}
+        <div className="text-center space-y-3">
+          <div className="w-12 h-12 rounded-2xl luxury-gradient-bg mx-auto flex items-center justify-center text-stone-950 font-bold shadow-lg shadow-amber-500/20">
+            <Flame className="w-6 h-6 text-stone-950" />
           </div>
-          <h1 className="text-lg font-bold text-neutral-900 tracking-tight">Create Account</h1>
-          <p className="text-xs text-neutral-500">Get started with Content Factory</p>
+          <div>
+            <h1 className="text-2xl font-extrabold luxury-gradient-text tracking-tight">Create Workspace</h1>
+            <p className="text-xs text-stone-400 mt-1">Get started with Content Factory Pro</p>
+          </div>
         </div>
 
         {error && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded text-red-700 text-xs flex items-start space-x-2">
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+          <div className="p-3.5 bg-red-950/60 border border-red-800/60 rounded-xl text-red-300 text-xs flex items-start space-x-2.5">
+            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-400" />
             <span>{error}</span>
           </div>
         )}
@@ -71,7 +77,7 @@ export default function Signup() {
           type="button"
           onClick={handleGoogleSignup}
           disabled={submitting}
-          className="w-full flex items-center justify-center space-x-2 py-2 px-4 border border-neutral-200 rounded bg-white hover:bg-neutral-50 text-neutral-700 font-medium text-xs transition-colors disabled:opacity-50"
+          className="w-full flex items-center justify-center space-x-3 py-2.5 px-4 border border-amber-900/30 rounded-xl bg-stone-900/90 hover:bg-stone-800 text-stone-200 font-semibold text-xs transition-all duration-200 disabled:opacity-50 shadow-sm hover:border-amber-900/50"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24">
             <path
@@ -94,56 +100,56 @@ export default function Signup() {
           <span>Sign up with Google</span>
         </button>
 
-        <div className="relative flex items-center justify-center my-2">
-          <div className="border-t border-neutral-200 w-full" />
-          <span className="bg-white px-2 text-[10px] text-neutral-400 uppercase font-mono absolute">or</span>
+        <div className="relative flex items-center justify-center my-3">
+          <div className="border-t border-amber-900/20 w-full" />
+          <span className="bg-stone-950/90 px-3 text-[10px] text-stone-500 uppercase font-mono tracking-widest absolute">or email</span>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           <div>
-            <label className="block font-medium text-neutral-700 mb-1">Email address</label>
+            <label className="block font-medium text-stone-300 mb-1.5">Email Address</label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@company.com"
-              className="w-full px-3 py-2 bg-neutral-50 border border-neutral-200 rounded text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-400"
+              className="w-full px-3.5 py-2.5 bg-stone-900/90 border border-amber-900/30 rounded-xl text-stone-100 placeholder-stone-500 focus:outline-none focus:border-amber-500/60 focus:ring-1 focus:ring-amber-500/30 transition-all"
             />
           </div>
 
           <div>
-            <label className="block font-medium text-neutral-700 mb-1">Password</label>
+            <label className="block font-medium text-stone-300 mb-1.5">Password</label>
             <input
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="At least 6 characters"
-              className="w-full px-3 py-2 bg-neutral-50 border border-neutral-200 rounded text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-400"
+              className="w-full px-3.5 py-2.5 bg-stone-900/90 border border-amber-900/30 rounded-xl text-stone-100 placeholder-stone-500 focus:outline-none focus:border-amber-500/60 focus:ring-1 focus:ring-amber-500/30 transition-all"
             />
           </div>
 
           <div>
-            <label className="block font-medium text-neutral-700 mb-1">Confirm Password</label>
+            <label className="block font-medium text-stone-300 mb-1.5">Confirm Password</label>
             <input
               type="password"
               required
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Re-enter password"
-              className="w-full px-3 py-2 bg-neutral-50 border border-neutral-200 rounded text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-400"
+              className="w-full px-3.5 py-2.5 bg-stone-900/90 border border-amber-900/30 rounded-xl text-stone-100 placeholder-stone-500 focus:outline-none focus:border-amber-500/60 focus:ring-1 focus:ring-amber-500/30 transition-all"
             />
           </div>
 
-          <Button type="submit" disabled={submitting} className="w-full">
+          <Button type="submit" disabled={submitting} className="w-full py-2.5 text-xs font-bold uppercase tracking-wider">
             {submitting ? 'Creating account...' : 'Create Account'}
           </Button>
         </form>
 
-        <div className="text-center text-xs text-neutral-500 border-t border-neutral-100 pt-4">
+        <div className="text-center text-xs text-stone-400 border-t border-amber-900/20 pt-4">
           Already have an account?{' '}
-          <Link to="/login" className="font-medium text-neutral-900 underline">
+          <Link to="/login" className="font-semibold text-amber-400 hover:text-amber-300 underline">
             Sign in
           </Link>
         </div>

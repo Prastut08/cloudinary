@@ -5,7 +5,7 @@ import {
   Loader2, CheckCircle2, RefreshCw, Check, Filter, Image as ImageIcon
 } from 'lucide-react';
 import { Button, Badge } from '../components/ui/UI';
-import { fetchProducts, fetchProductById, generateSocialFormatsAPI, regenerateSingleAsset, downloadProductZipArchive } from '../services/api';
+import { fetchProducts, fetchProductById, generateSocialFormatsAPI, downloadProductZipArchive } from '../services/api';
 
 export default function SocialFactory() {
   const navigate = useNavigate();
@@ -131,7 +131,6 @@ export default function SocialFactory() {
 
   const socialFactoryAssets = selectedProduct?.assets?.socialFactory || [];
 
-  // Group assets by category
   const filteredAssets = socialFactoryAssets.filter((ast) => {
     if (activeCategoryFilter === 'All') return true;
     return (ast.category || 'Social').toLowerCase() === activeCategoryFilter.toLowerCase();
@@ -140,34 +139,33 @@ export default function SocialFactory() {
   return (
     <div className="space-y-8">
       {/* Top Banner Header */}
-      <div className="border-b border-neutral-200 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="border-b border-amber-900/20 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-neutral-900 tracking-tight flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-neutral-900" />
-            Smart Social Media Content Factory
+          <h1 className="text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
+            Content Factory Suite
           </h1>
-          <p className="text-xs text-neutral-500 mt-1">
+          <p className="text-xs text-stone-400 mt-1">
             "One upload. Every format." Automatically generate platform-ready media variants powered by Cloudinary.
           </p>
         </div>
 
         {selectedProduct && (
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-wrap items-center gap-2.5">
             <Button
               onClick={() => handleGenerateFormats(null)}
               disabled={generating || selectedFormatKeys.length === 0}
               variant="primary"
               size="md"
-              className="gap-1.5"
+              className="gap-2"
             >
               {generating ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin text-stone-950" />
                   <span>Preparing Formats...</span>
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-4 h-4" />
+                  <Sparkles className="w-4 h-4 text-stone-950" />
                   <span>Generate All Formats</span>
                 </>
               )}
@@ -177,17 +175,17 @@ export default function SocialFactory() {
               disabled={isDownloadingZip}
               variant="secondary"
               size="md"
-              className="gap-1.5"
+              className="gap-2"
             >
               {isDownloadingZip ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin text-amber-400" />
                   <span>Preparing ZIP...</span>
                 </>
               ) : (
                 <>
-                  <Download className="w-4 h-4" />
-                  <span>Download All Formats</span>
+                  <Download className="w-4 h-4 text-stone-400" />
+                  <span>Download All ZIP</span>
                 </>
               )}
             </Button>
@@ -196,19 +194,18 @@ export default function SocialFactory() {
       </div>
 
       {loading ? (
-        <div className="p-16 text-center text-xs text-neutral-500 flex flex-col items-center justify-center gap-3 bg-white border border-neutral-200 rounded">
-          <Loader2 className="w-5 h-5 animate-spin text-neutral-900" />
+        <div className="p-16 text-center text-xs text-stone-400 flex flex-col items-center justify-center gap-3 glass-panel rounded-2xl">
+          <Loader2 className="w-6 h-6 animate-spin text-amber-400" />
           <span>Loading product catalog for Social Factory...</span>
         </div>
       ) : products.length === 0 ? (
-        /* Empty State */
-        <div className="bg-white border border-neutral-200 rounded p-12 text-center max-w-md mx-auto space-y-4">
-          <div className="w-10 h-10 rounded-full bg-neutral-100 border border-neutral-200 flex items-center justify-center mx-auto text-neutral-400">
-            <ImageIcon className="w-5 h-5" />
+        <div className="glass-panel rounded-2xl p-12 text-center max-w-md mx-auto space-y-4 border border-amber-900/20">
+          <div className="w-12 h-12 rounded-2xl bg-stone-900 border border-amber-900/30 flex items-center justify-center mx-auto text-amber-400">
+            <ImageIcon className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-neutral-900">No content yet</h3>
-            <p className="text-xs text-neutral-500 mt-1">
+            <h3 className="text-base font-bold text-white">No content yet</h3>
+            <p className="text-xs text-stone-400 mt-1">
               Upload a product to generate social and web media formats automatically.
             </p>
           </div>
@@ -219,16 +216,16 @@ export default function SocialFactory() {
       ) : (
         <div className="space-y-8">
           {/* Selector & Product Master Card */}
-          <div className="bg-white border border-neutral-200 rounded p-6 space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-100 pb-4">
+          <div className="glass-panel rounded-2xl p-6 space-y-6 border border-amber-900/20">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-amber-900/20 pb-4">
               <div>
-                <label className="block text-[10px] uppercase font-semibold text-neutral-400 mb-1">
+                <label className="block text-[10px] uppercase font-bold text-amber-400 mb-1 font-mono tracking-widest">
                   Select Master Product
                 </label>
                 <select
                   value={selectedProductId}
                   onChange={(e) => setSelectedProductId(e.target.value)}
-                  className="px-3 py-1.5 bg-neutral-50 border border-neutral-200 rounded text-xs text-neutral-900 font-semibold focus:outline-none focus:border-neutral-400"
+                  className="px-4 py-2 bg-stone-900 border border-amber-900/30 rounded-xl text-xs text-white font-semibold focus:outline-none focus:border-amber-500/60"
                 >
                   {products.map((p) => (
                     <option key={p.id} value={p.id}>
@@ -238,19 +235,18 @@ export default function SocialFactory() {
                 </select>
               </div>
 
-              <span className="text-xs text-neutral-400 font-mono">
+              <span className="text-xs text-stone-400 font-mono bg-stone-900 px-3 py-1.5 rounded-xl border border-amber-900/30">
                 Source: Master Upload + Cloudinary Cutout Engine
               </span>
             </div>
 
             {selectedProduct && (
               <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
-                {/* Original Preview */}
-                <div className="md:col-span-4 bg-neutral-50 border border-neutral-200 rounded p-4 space-y-3">
-                  <span className="text-[10px] font-bold uppercase text-neutral-400 font-mono block">
+                <div className="md:col-span-4 bg-stone-900/60 border border-amber-900/30 rounded-2xl p-4 space-y-3">
+                  <span className="text-[10px] font-bold uppercase text-stone-400 font-mono block tracking-wider">
                     Original Product Source
                   </span>
-                  <div className="aspect-square bg-white rounded border border-neutral-200 overflow-hidden flex items-center justify-center p-2">
+                  <div className="aspect-square bg-stone-950 rounded-xl border border-amber-900/30 overflow-hidden flex items-center justify-center p-3">
                     <img
                       src={selectedProduct.originalAsset?.url}
                       alt={selectedProduct.name}
@@ -258,24 +254,23 @@ export default function SocialFactory() {
                     />
                   </div>
                   <div>
-                    <h3 className="text-xs font-bold text-neutral-900">{selectedProduct.name}</h3>
-                    <p className="text-[11px] text-neutral-500">{selectedProduct.category}</p>
+                    <h3 className="text-sm font-bold text-white">{selectedProduct.name}</h3>
+                    <p className="text-xs text-stone-400">{selectedProduct.category}</p>
                   </div>
                 </div>
 
-                {/* Preset Format Checkboxes & Smart Packs */}
                 <div className="md:col-span-8 space-y-4">
                   <div>
-                    <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block mb-2">
+                    <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest block mb-2 font-mono">
                       Smart Presets
                     </span>
-                    <div className="flex flex-wrap items-center gap-1.5">
+                    <div className="flex flex-wrap items-center gap-2">
                       {SMART_PACKS.map((pack) => (
                         <button
                           key={pack.id}
                           type="button"
                           onClick={() => applyPackPreset(pack.keys)}
-                          className="px-2.5 py-1 text-[10px] font-mono font-semibold rounded border border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-700 transition-colors"
+                          className="px-3 py-1.5 text-[10px] font-mono font-bold rounded-xl border border-amber-500/20 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 transition-colors"
                         >
                           {pack.name}
                         </button>
@@ -283,39 +278,39 @@ export default function SocialFactory() {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between pt-2 border-t border-neutral-100">
-                    <span className="text-xs font-bold text-neutral-900 uppercase">
+                  <div className="flex items-center justify-between pt-2 border-t border-amber-900/20">
+                    <span className="text-xs font-bold text-white uppercase tracking-wider">
                       Select Formats to Generate
                     </span>
                     <div className="space-x-3 text-[11px] font-medium">
                       <button
                         onClick={() => setSelectedFormatKeys(FORMAT_PRESETS.map((p) => p.key))}
-                        className="text-neutral-600 hover:text-neutral-900 underline"
+                        className="text-amber-400 hover:text-amber-300 underline"
                       >
                         Select All
                       </button>
                       <button
                         onClick={() => setSelectedFormatKeys([])}
-                        className="text-neutral-600 hover:text-neutral-900 underline"
+                        className="text-stone-400 hover:text-white underline"
                       >
                         Clear
                       </button>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-neutral-50 p-4 rounded border border-neutral-200 text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 bg-stone-900/60 p-4 rounded-2xl border border-amber-900/30 text-xs">
                     {FORMAT_PRESETS.map((preset) => (
                       <label
                         key={preset.key}
-                        className="flex items-center space-x-2 p-1.5 rounded hover:bg-white transition-colors cursor-pointer"
+                        className="flex items-center space-x-3 p-2 rounded-xl hover:bg-stone-800/60 transition-colors cursor-pointer"
                       >
                         <input
                           type="checkbox"
                           checked={selectedFormatKeys.includes(preset.key)}
                           onChange={() => toggleFormatKey(preset.key)}
-                          className="rounded border-neutral-300 text-neutral-900 focus:ring-neutral-400"
+                          className="rounded border-amber-900/40 text-amber-500 focus:ring-amber-400 bg-stone-950"
                         />
-                        <span className="font-medium text-neutral-800">{preset.name}</span>
+                        <span className="font-semibold text-stone-200">{preset.name}</span>
                       </label>
                     ))}
                   </div>
@@ -335,19 +330,19 @@ export default function SocialFactory() {
           </div>
 
           {/* Filter Pills */}
-          <div className="flex items-center justify-between border-b border-neutral-200 pb-3">
-            <h2 className="text-sm font-bold text-neutral-900">
+          <div className="flex items-center justify-between border-b border-amber-900/20 pb-3">
+            <h2 className="text-base font-bold text-white">
               Generated Social Media Formats ({socialFactoryAssets.length})
             </h2>
-            <div className="flex space-x-1 bg-neutral-100 p-0.5 rounded border border-neutral-200 text-xs">
+            <div className="flex space-x-1.5 bg-stone-900/80 p-1 rounded-xl border border-amber-900/30 text-xs">
               {['All', 'Social', 'Web', 'Profile'].map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setActiveCategoryFilter(cat)}
-                  className={`px-3 py-1 rounded font-medium transition-colors ${
+                  className={`px-3 py-1.5 rounded-lg font-semibold transition-colors ${
                     activeCategoryFilter === cat
-                      ? 'bg-white text-neutral-900 shadow-xs font-semibold'
-                      : 'text-neutral-600 hover:text-neutral-900'
+                      ? 'luxury-gradient-bg text-stone-950 font-bold shadow-sm'
+                      : 'text-stone-400 hover:text-white'
                   }`}
                 >
                   {cat}
@@ -362,55 +357,55 @@ export default function SocialFactory() {
               {filteredAssets.map((ast) => (
                 <div
                   key={ast.type}
-                  className="bg-white border border-neutral-200 rounded-lg overflow-hidden flex flex-col justify-between hover:border-neutral-300 transition-colors shadow-xs"
+                  className="glass-card rounded-2xl overflow-hidden flex flex-col justify-between hover:border-amber-500/40 transition-all border border-amber-900/20"
                 >
-                  <div className="aspect-square bg-neutral-100 border-b border-neutral-200 relative overflow-hidden flex items-center justify-center p-4">
+                  <div className="aspect-square bg-stone-950 border-b border-amber-900/20 relative overflow-hidden flex items-center justify-center p-4">
                     <img
                       src={ast.url}
                       alt={ast.title}
                       className="max-h-full max-w-full object-contain"
                     />
-                    <span className="absolute top-2 left-2 text-[10px] font-semibold px-2 py-0.5 rounded bg-neutral-900 text-white">
+                    <span className="absolute top-3 left-3 text-[10px] font-bold px-2.5 py-1 rounded-full bg-stone-900/90 text-amber-300 border border-amber-500/30 backdrop-blur-md">
                       {ast.platform}
                     </span>
                   </div>
 
                   <div className="p-4 space-y-3">
                     <div>
-                      <h3 className="text-xs font-bold text-neutral-900">{ast.title}</h3>
-                      <p className="text-[11px] text-neutral-400 font-mono mt-0.5">
+                      <h3 className="text-sm font-bold text-white">{ast.title}</h3>
+                      <p className="text-[11px] text-stone-400 font-mono mt-0.5">
                         {ast.specs} · {(ast.format || 'jpg').toUpperCase()}
                       </p>
-                      <p className="text-[10px] text-neutral-400 mt-0.5">Optimized (f_auto, q_auto)</p>
+                      <p className="text-[10px] text-amber-400/80 mt-0.5 font-mono">Optimized (f_auto, q_auto)</p>
                     </div>
 
-                    <div className="flex items-center space-x-2 pt-2 border-t border-neutral-100">
+                    <div className="flex items-center space-x-2 pt-3 border-t border-amber-900/20">
                       <a
                         href={ast.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex-1 inline-flex items-center justify-center space-x-1 py-1.5 px-3 rounded border border-neutral-200 text-[11px] font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
+                        className="flex-1 inline-flex items-center justify-center space-x-1.5 py-2 px-3 rounded-xl border border-amber-900/30 text-xs font-semibold text-stone-300 hover:bg-stone-800 transition-colors"
                       >
-                        <ExternalLink className="w-3.5 h-3.5 text-neutral-400" />
+                        <ExternalLink className="w-3.5 h-3.5 text-stone-400" />
                         <span>Open</span>
                       </a>
                       <a
                         href={ast.url}
                         download
-                        className="inline-flex items-center justify-center p-2 rounded bg-neutral-900 text-white hover:bg-neutral-800 transition-colors"
+                        className="inline-flex items-center justify-center p-2 rounded-xl luxury-gradient-button text-stone-950"
                         title="Download Format"
                       >
-                        <Download className="w-3.5 h-3.5" />
+                        <Download className="w-4 h-4" />
                       </a>
                       <button
                         onClick={() => handleRegenerateSingleFormat(ast.type)}
                         disabled={regeneratingKey === ast.type}
-                        className="p-2 rounded border border-neutral-200 text-neutral-700 hover:bg-neutral-50 transition-colors disabled:opacity-50"
+                        className="p-2 rounded-xl border border-amber-900/30 text-stone-400 hover:text-white hover:bg-stone-800 transition-colors disabled:opacity-50"
                         title="Regenerate single format"
                       >
                         <RefreshCw
-                          className={`w-3.5 h-3.5 text-neutral-500 ${
-                            regeneratingKey === ast.type ? 'animate-spin' : ''
+                          className={`w-4 h-4 ${
+                            regeneratingKey === ast.type ? 'animate-spin text-amber-400' : ''
                           }`}
                         />
                       </button>
@@ -420,13 +415,13 @@ export default function SocialFactory() {
               ))}
             </div>
           ) : (
-            <div className="bg-white border border-neutral-200 rounded p-12 text-center max-w-md mx-auto space-y-3">
-              <div className="w-10 h-10 rounded-full bg-neutral-100 border border-neutral-200 flex items-center justify-center mx-auto text-neutral-400">
-                <Sparkles className="w-5 h-5" />
+            <div className="glass-panel rounded-2xl p-12 text-center max-w-md mx-auto space-y-4 border border-amber-900/20">
+              <div className="w-12 h-12 rounded-2xl bg-stone-900 border border-amber-900/30 flex items-center justify-center mx-auto text-amber-400">
+                <Sparkles className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-neutral-900">No formats generated yet</h3>
-                <p className="text-xs text-neutral-500 mt-1">
+                <h3 className="text-base font-bold text-white">No formats generated yet</h3>
+                <p className="text-xs text-stone-400 mt-1">
                   Click "Generate All Formats" above to build Instagram, YouTube, and website media variants instantly.
                 </p>
               </div>

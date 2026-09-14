@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Search, ExternalLink, Download, FolderSearch, Loader2, Filter,
-  X, Tag, Eye, Info, RefreshCw, AlertCircle, ArrowUpRight
+  X, Tag, Eye, Info, RefreshCw, AlertCircle, ArrowUpRight, Sparkles
 } from 'lucide-react';
 import { searchAssets, fetchProducts } from '../services/api';
 import { Button, Badge } from '../components/ui/UI';
@@ -61,14 +61,12 @@ export default function AssetLibrary() {
       if (res && res.data) {
         let fetched = res.data;
 
-        // Client-side format filter if specified
         if (selectedFormat !== 'All') {
           fetched = fetched.filter(
             (ast) => (ast.format || '').toLowerCase() === selectedFormat.toLowerCase()
           );
         }
 
-        // Sorting
         fetched.sort((a, b) => {
           if (sortBy === 'oldest') {
             return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
@@ -79,7 +77,6 @@ export default function AssetLibrary() {
           if (sortBy === 'type') {
             return a.type.localeCompare(b.type);
           }
-          // Default: newest
           return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
         });
 
@@ -130,48 +127,49 @@ export default function AssetLibrary() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="border-b border-neutral-200 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="border-b border-amber-900/20 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-neutral-900 tracking-tight">Asset Library</h1>
-          <p className="text-xs text-neutral-500 mt-1">
-            Search and manage your generated commerce media powered by Cloudinary.
+          <h1 className="text-2xl font-extrabold text-white tracking-tight">Media Library</h1>
+          <p className="text-xs text-stone-400 mt-1">
+            Search, filter, and manage high-res transformed media assets powered by Cloudinary.
           </p>
         </div>
-        <div className="text-xs text-neutral-500 font-mono bg-neutral-100 px-3 py-1.5 rounded border border-neutral-200 self-start sm:self-auto">
-          Total Assets: <span className="font-bold text-neutral-900">{totalCount}</span>
+        <div className="text-xs text-stone-300 font-mono bg-stone-900 px-4 py-2 rounded-xl border border-amber-900/30 self-start sm:self-auto flex items-center space-x-2">
+          <span className="text-stone-500">Total Assets:</span>
+          <span className="font-bold text-amber-400">{totalCount}</span>
         </div>
       </div>
 
       {/* Search Bar & Controls Bar */}
-      <div className="bg-white border border-neutral-200 rounded p-4 space-y-3">
+      <div className="glass-panel rounded-2xl p-5 space-y-4 border border-amber-900/20">
         <div className="flex flex-col sm:flex-row gap-3 items-center">
           {/* Search Input */}
           <div className="relative flex-1 w-full">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400" />
             <input
               type="text"
               placeholder="Search products, tags, platforms (e.g. shoe, Instagram, marketplace)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-8 py-2 bg-neutral-50 border border-neutral-200 rounded text-xs text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-400 focus:bg-white transition-colors"
+              className="w-full pl-10 pr-8 py-2.5 bg-stone-900/90 border border-amber-900/30 rounded-xl text-xs text-stone-100 placeholder-stone-500 focus:outline-none focus:border-amber-500/60 transition-colors"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-white"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-4 h-4" />
               </button>
             )}
           </div>
 
           {/* Sort By Dropdown */}
           <div className="flex items-center space-x-2 w-full sm:w-auto">
-            <span className="text-xs text-neutral-400 shrink-0">Sort:</span>
+            <span className="text-xs text-stone-400 shrink-0 font-mono">Sort:</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-3 py-2 bg-neutral-50 border border-neutral-200 rounded text-xs text-neutral-800 focus:outline-none focus:border-neutral-400"
+              className="px-3.5 py-2.5 bg-stone-900 border border-amber-900/30 rounded-xl text-xs text-stone-200 focus:outline-none focus:border-amber-500/60"
             >
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
@@ -182,16 +180,15 @@ export default function AssetLibrary() {
         </div>
 
         {/* Filter Toolbar */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-neutral-100 text-xs">
-          {/* Asset Type Filter */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-amber-900/20 text-xs">
           <div>
-            <label className="block text-[10px] uppercase font-semibold text-neutral-400 mb-1">
+            <label className="block text-[10px] uppercase font-bold text-amber-400 mb-1 font-mono tracking-widest">
               Asset Type
             </label>
             <select
               value={selectedAssetType}
               onChange={(e) => setSelectedAssetType(e.target.value)}
-              className="w-full px-2.5 py-1.5 bg-neutral-50 border border-neutral-200 rounded text-neutral-800 focus:outline-none focus:border-neutral-400"
+              className="w-full px-3 py-2 bg-stone-900 border border-amber-900/30 rounded-xl text-stone-200 focus:outline-none focus:border-amber-500/60"
             >
               {assetTypeOptions.map((opt) => (
                 <option key={opt} value={opt}>{opt}</option>
@@ -199,15 +196,14 @@ export default function AssetLibrary() {
             </select>
           </div>
 
-          {/* Platform Filter */}
           <div>
-            <label className="block text-[10px] uppercase font-semibold text-neutral-400 mb-1">
+            <label className="block text-[10px] uppercase font-bold text-amber-400 mb-1 font-mono tracking-widest">
               Platform
             </label>
             <select
               value={selectedPlatform}
               onChange={(e) => setSelectedPlatform(e.target.value)}
-              className="w-full px-2.5 py-1.5 bg-neutral-50 border border-neutral-200 rounded text-neutral-800 focus:outline-none focus:border-neutral-400"
+              className="w-full px-3 py-2 bg-stone-900 border border-amber-900/30 rounded-xl text-stone-200 focus:outline-none focus:border-amber-500/60"
             >
               {platformOptions.map((opt) => (
                 <option key={opt} value={opt}>{opt}</option>
@@ -215,15 +211,14 @@ export default function AssetLibrary() {
             </select>
           </div>
 
-          {/* Product Filter */}
           <div>
-            <label className="block text-[10px] uppercase font-semibold text-neutral-400 mb-1">
-              Product
+            <label className="block text-[10px] uppercase font-bold text-amber-400 mb-1 font-mono tracking-widest">
+              Product Filter
             </label>
             <select
               value={selectedProduct}
               onChange={(e) => setSelectedProduct(e.target.value)}
-              className="w-full px-2.5 py-1.5 bg-neutral-50 border border-neutral-200 rounded text-neutral-800 focus:outline-none focus:border-neutral-400"
+              className="w-full px-3 py-2 bg-stone-900 border border-amber-900/30 rounded-xl text-stone-200 focus:outline-none focus:border-amber-500/60"
             >
               <option value="All">All Products ({userProducts.length})</option>
               {userProducts.map((p) => (
@@ -232,15 +227,14 @@ export default function AssetLibrary() {
             </select>
           </div>
 
-          {/* Format Filter */}
           <div>
-            <label className="block text-[10px] uppercase font-semibold text-neutral-400 mb-1">
+            <label className="block text-[10px] uppercase font-bold text-amber-400 mb-1 font-mono tracking-widest">
               Format
             </label>
             <select
               value={selectedFormat}
               onChange={(e) => setSelectedFormat(e.target.value)}
-              className="w-full px-2.5 py-1.5 bg-neutral-50 border border-neutral-200 rounded text-neutral-800 focus:outline-none focus:border-neutral-400"
+              className="w-full px-3 py-2 bg-stone-900 border border-amber-900/30 rounded-xl text-stone-200 focus:outline-none focus:border-amber-500/60"
             >
               {formatOptions.map((opt) => (
                 <option key={opt} value={opt}>{opt.toUpperCase()}</option>
@@ -250,34 +244,23 @@ export default function AssetLibrary() {
         </div>
 
         {hasActiveFilters && (
-          <div className="flex items-center justify-between pt-2 border-t border-neutral-100">
+          <div className="flex items-center justify-between pt-2 border-t border-amber-900/20">
             <div className="flex flex-wrap gap-1.5 items-center">
-              <span className="text-[11px] text-neutral-400 font-medium">Active filters:</span>
+              <span className="text-[11px] text-stone-400 font-medium font-mono">Active filters:</span>
               {debouncedQuery && (
-                <span className="text-[10px] px-2 py-0.5 rounded bg-neutral-100 border border-neutral-200 text-neutral-700">
-                  Query: "{debouncedQuery}"
-                </span>
+                <Badge variant="gold">Query: "{debouncedQuery}"</Badge>
               )}
               {selectedAssetType !== 'All' && (
-                <span className="text-[10px] px-2 py-0.5 rounded bg-neutral-100 border border-neutral-200 text-neutral-700">
-                  Type: {selectedAssetType}
-                </span>
+                <Badge variant="gold">Type: {selectedAssetType}</Badge>
               )}
               {selectedPlatform !== 'All' && (
-                <span className="text-[10px] px-2 py-0.5 rounded bg-neutral-100 border border-neutral-200 text-neutral-700">
-                  Platform: {selectedPlatform}
-                </span>
-              )}
-              {selectedProduct !== 'All' && (
-                <span className="text-[10px] px-2 py-0.5 rounded bg-neutral-100 border border-neutral-200 text-neutral-700">
-                  Product ID Filter Active
-                </span>
+                <Badge variant="gold">Platform: {selectedPlatform}</Badge>
               )}
             </div>
 
             <button
               onClick={handleClearFilters}
-              className="text-[11px] font-medium text-neutral-600 hover:text-neutral-900 underline"
+              className="text-[11px] font-semibold text-amber-400 hover:text-amber-300 underline"
             >
               Reset Filters
             </button>
@@ -285,47 +268,45 @@ export default function AssetLibrary() {
         )}
       </div>
 
-      {/* Main Grid / State Container */}
+      {/* Main Grid Container */}
       {loading ? (
-        <div className="p-16 text-center text-xs text-neutral-500 flex flex-col items-center justify-center gap-3 bg-white border border-neutral-200 rounded">
-          <Loader2 className="w-5 h-5 animate-spin text-neutral-900" />
-          <span>Searching Cloudinary media catalog...</span>
+        <div className="p-16 text-center text-xs text-stone-400 flex flex-col items-center justify-center gap-3 glass-panel rounded-2xl">
+          <Loader2 className="w-6 h-6 animate-spin text-amber-400" />
+          <span>Searching Cloudinary media vault...</span>
         </div>
       ) : searchError ? (
-        /* CASE 3: Search Request Failed */
-        <div className="bg-white border border-neutral-200 rounded p-12 text-center max-w-md mx-auto space-y-4">
-          <AlertCircle className="w-8 h-8 text-red-500 mx-auto" />
+        <div className="glass-panel rounded-2xl p-12 text-center max-w-md mx-auto space-y-4 border border-red-900/40">
+          <AlertCircle className="w-8 h-8 text-red-400 mx-auto" />
           <div>
-            <h3 className="text-sm font-bold text-neutral-900">Unable to search assets</h3>
-            <p className="text-xs text-neutral-500 mt-1">{searchError}</p>
+            <h3 className="text-base font-bold text-white">Unable to search assets</h3>
+            <p className="text-xs text-stone-400 mt-1">{searchError}</p>
           </div>
           <Button onClick={performSearch} variant="secondary" size="sm">
             Try Again
           </Button>
         </div>
       ) : assets.length > 0 ? (
-        /* Asset Grid */
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {assets.map((asset) => (
             <div
               key={asset.id}
-              className="bg-white border border-neutral-200 rounded overflow-hidden flex flex-col justify-between hover:border-neutral-300 transition-colors"
+              className="glass-card rounded-2xl overflow-hidden flex flex-col justify-between hover:border-amber-500/40 transition-all border border-amber-900/20"
             >
               {/* Asset Preview Container */}
-              <div className="aspect-square bg-neutral-100 border-b border-neutral-200 relative overflow-hidden group">
+              <div className="aspect-square bg-stone-950 border-b border-amber-900/20 relative overflow-hidden group flex items-center justify-center p-3">
                 <img
                   src={asset.url}
                   alt={asset.title}
-                  className="w-full h-full object-contain p-2"
+                  className="max-h-full max-w-full object-contain"
                 />
-                <span className="absolute top-2 left-2 text-[10px] font-medium px-2 py-0.5 rounded bg-neutral-900 text-white">
+                <span className="absolute top-3 left-3 text-[10px] font-bold px-2.5 py-1 rounded-full bg-stone-900/90 text-amber-300 border border-amber-500/30 backdrop-blur-md">
                   {asset.platform}
                 </span>
                 <button
                   onClick={() => setSelectedAsset(asset)}
-                  className="absolute inset-0 bg-neutral-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-medium gap-1.5"
+                  className="absolute inset-0 bg-stone-950/85 backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-semibold gap-2"
                 >
-                  <Eye className="w-4 h-4" />
+                  <Eye className="w-4 h-4 text-amber-400" />
                   <span>Inspect Metadata</span>
                 </button>
               </div>
@@ -333,98 +314,79 @@ export default function AssetLibrary() {
               {/* Asset Metadata Content */}
               <div className="p-4 space-y-3">
                 <div>
-                  <div className="text-[10px] text-neutral-400 uppercase font-semibold tracking-wider">
+                  <div className="text-[10px] text-amber-400 uppercase font-bold tracking-widest font-mono">
                     {asset.productName}
                   </div>
-                  <h3 className="text-xs font-bold text-neutral-900 mt-0.5 truncate">
+                  <h3 className="text-xs font-bold text-white mt-0.5 truncate">
                     {asset.title}
                   </h3>
-                  <p className="text-[11px] text-neutral-400 font-mono mt-0.5">
+                  <p className="text-[11px] text-stone-400 font-mono mt-0.5">
                     {asset.specs} · {asset.format.toUpperCase()}
                   </p>
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center space-x-2 pt-2 border-t border-neutral-100">
+                <div className="flex items-center space-x-2 pt-3 border-t border-amber-900/20">
                   <button
                     onClick={() => setSelectedAsset(asset)}
-                    className="flex-1 inline-flex items-center justify-center space-x-1 py-1.5 px-2.5 rounded border border-neutral-200 text-[11px] font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
+                    className="flex-1 inline-flex items-center justify-center space-x-1.5 py-2 px-3 rounded-xl border border-amber-900/30 text-xs font-semibold text-stone-300 hover:bg-stone-800 transition-colors"
                   >
-                    <Info className="w-3 h-3 text-neutral-400" />
-                    <span>Open</span>
+                    <Info className="w-3.5 h-3.5 text-stone-400" />
+                    <span>Inspect</span>
                   </button>
                   <a
                     href={asset.url}
                     download
-                    className="inline-flex items-center justify-center p-1.5 rounded border border-neutral-200 text-neutral-700 hover:bg-neutral-50 transition-colors"
+                    className="inline-flex items-center justify-center p-2 rounded-xl luxury-gradient-button text-stone-950"
                     title="Download Asset"
                   >
-                    <Download className="w-3.5 h-3.5 text-neutral-500" />
+                    <Download className="w-4 h-4" />
                   </a>
                 </div>
               </div>
             </div>
           ))}
         </div>
-      ) : hasActiveFilters ? (
-        /* CASE 2: Assets exist, but search returns nothing */
-        <div className="bg-white border border-neutral-200 rounded p-12 text-center max-w-md mx-auto space-y-4">
-          <div className="w-10 h-10 rounded-full bg-neutral-100 border border-neutral-200 flex items-center justify-center mx-auto text-neutral-400">
-            <FolderSearch className="w-5 h-5" />
+      ) : (
+        <div className="glass-panel rounded-2xl p-12 text-center max-w-md mx-auto space-y-4 border border-amber-900/20">
+          <div className="w-12 h-12 rounded-2xl bg-stone-900 border border-amber-900/30 flex items-center justify-center mx-auto text-amber-400">
+            <FolderSearch className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-neutral-900">No matching assets</h3>
-            <p className="text-xs text-neutral-500 mt-1">
-              Try a different product name, tag, or platform filter.
+            <h3 className="text-base font-bold text-white">No assets found</h3>
+            <p className="text-xs text-stone-400 mt-1">
+              Try modifying your search or upload a new product.
             </p>
           </div>
           <Button variant="secondary" size="sm" onClick={handleClearFilters}>
-            Clear Search Filters
-          </Button>
-        </div>
-      ) : (
-        /* CASE 1: No assets exist at all */
-        <div className="bg-white border border-neutral-200 rounded p-12 text-center max-w-md mx-auto space-y-4">
-          <div className="w-10 h-10 rounded-full bg-neutral-100 border border-neutral-200 flex items-center justify-center mx-auto text-neutral-400">
-            <FolderSearch className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="text-sm font-semibold text-neutral-900">No generated assets yet</h3>
-            <p className="text-xs text-neutral-500 mt-1">
-              Upload a product to start building your Cloudinary media library.
-            </p>
-          </div>
-          <Button onClick={() => navigate('/upload')} variant="primary" size="sm">
-            Upload Product
+            Clear Filters
           </Button>
         </div>
       )}
 
-      {/* Structured Asset Detail Modal */}
+      {/* Asset Metadata Modal */}
       {selectedAsset && (
-        <div className="fixed inset-0 z-50 bg-neutral-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white border border-neutral-200 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-6 shadow-xl">
-            {/* Modal Header */}
-            <div className="flex items-start justify-between border-b border-neutral-200 pb-4">
+        <div className="fixed inset-0 z-50 bg-stone-950/85 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="glass-panel rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-6 shadow-2xl border border-amber-900/30">
+            <div className="flex items-start justify-between border-b border-amber-900/20 pb-4">
               <div>
-                <span className="text-[10px] text-neutral-400 uppercase font-semibold font-mono">
-                  Asset Details & Metadata
+                <span className="text-[10px] text-amber-400 uppercase font-bold font-mono tracking-widest">
+                  Cloudinary Metadata
                 </span>
-                <h2 className="text-base font-bold text-neutral-900">{selectedAsset.title}</h2>
-                <p className="text-xs text-neutral-500 mt-0.5">
-                  Source Product: <span className="font-semibold text-neutral-800">{selectedAsset.productName}</span>
+                <h2 className="text-lg font-bold text-white">{selectedAsset.title}</h2>
+                <p className="text-xs text-stone-400 mt-0.5">
+                  Source: <span className="font-semibold text-stone-200">{selectedAsset.productName}</span>
                 </p>
               </div>
               <button
                 onClick={() => setSelectedAsset(null)}
-                className="p-1 rounded text-neutral-400 hover:text-neutral-700"
+                className="p-1 rounded-lg text-stone-400 hover:text-white"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Modal Preview */}
-            <div className="aspect-video bg-neutral-100 rounded border border-neutral-200 flex items-center justify-center p-4">
+            <div className="aspect-video bg-stone-950 rounded-xl border border-amber-900/30 flex items-center justify-center p-4">
               <img
                 src={selectedAsset.url}
                 alt={selectedAsset.title}
@@ -432,69 +394,42 @@ export default function AssetLibrary() {
               />
             </div>
 
-            {/* Structured Metadata Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs bg-neutral-50 p-4 rounded border border-neutral-200">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs bg-stone-900/60 p-4 rounded-xl border border-amber-900/30">
               <div>
-                <span className="text-[10px] text-neutral-400 uppercase font-semibold block">Platform</span>
-                <span className="font-medium text-neutral-900">{selectedAsset.platform}</span>
+                <span className="text-[10px] text-stone-400 uppercase font-mono block">Platform</span>
+                <span className="font-bold text-white">{selectedAsset.platform}</span>
               </div>
               <div>
-                <span className="text-[10px] text-neutral-400 uppercase font-semibold block">Asset Type</span>
-                <span className="font-medium text-neutral-900">{selectedAsset.type}</span>
+                <span className="text-[10px] text-stone-400 uppercase font-mono block">Asset Type</span>
+                <span className="font-bold text-white">{selectedAsset.type}</span>
               </div>
               <div>
-                <span className="text-[10px] text-neutral-400 uppercase font-semibold block">Format</span>
-                <span className="font-medium text-neutral-900">{selectedAsset.format.toUpperCase()}</span>
+                <span className="text-[10px] text-stone-400 uppercase font-mono block">Format</span>
+                <span className="font-bold text-white">{selectedAsset.format.toUpperCase()}</span>
               </div>
               <div>
-                <span className="text-[10px] text-neutral-400 uppercase font-semibold block">Dimensions</span>
-                <span className="font-medium font-mono text-neutral-900">{selectedAsset.specs}</span>
+                <span className="text-[10px] text-stone-400 uppercase font-mono block">Dimensions</span>
+                <span className="font-mono text-amber-300 font-bold">{selectedAsset.specs}</span>
               </div>
               <div>
-                <span className="text-[10px] text-neutral-400 uppercase font-semibold block">Cloudinary Public ID</span>
-                <span className="font-mono text-neutral-700 text-[11px] truncate block" title={selectedAsset.publicId}>
+                <span className="text-[10px] text-stone-400 uppercase font-mono block">Public ID</span>
+                <span className="font-mono text-stone-300 text-[11px] truncate block" title={selectedAsset.publicId}>
                   {selectedAsset.publicId || 'N/A'}
-                </span>
-              </div>
-              <div>
-                <span className="text-[10px] text-neutral-400 uppercase font-semibold block">Creation Date</span>
-                <span className="text-neutral-700 text-[11px]">
-                  {selectedAsset.createdAt ? new Date(selectedAsset.createdAt).toLocaleDateString() : 'N/A'}
                 </span>
               </div>
             </div>
 
-            {/* Tags */}
-            {selectedAsset.tags && selectedAsset.tags.length > 0 && (
-              <div className="space-y-1.5">
-                <span className="text-xs font-semibold text-neutral-500 flex items-center gap-1">
-                  <Tag className="w-3.5 h-3.5" /> Searchable AI Tags
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {selectedAsset.tags.map((t) => (
-                    <span
-                      key={t}
-                      className="text-[11px] px-2.5 py-0.5 rounded bg-neutral-100 text-neutral-700 border border-neutral-200 font-medium"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Modal Actions */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-neutral-200">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-amber-900/20">
               <button
                 onClick={() => {
                   const pId = selectedAsset.productId;
                   setSelectedAsset(null);
                   navigate(`/products/${pId}`);
                 }}
-                className="w-full sm:w-auto inline-flex items-center justify-center space-x-1.5 px-3.5 py-2 rounded border border-neutral-200 text-xs font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
+                className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-4 py-2 rounded-xl border border-amber-900/30 text-xs font-semibold text-stone-300 hover:bg-stone-800 transition-colors"
               >
-                <span>View Product Details</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
+                <span>View Product Showcase</span>
+                <ArrowUpRight className="w-4 h-4 text-amber-400" />
               </button>
 
               <div className="flex items-center space-x-2 w-full sm:w-auto">
@@ -502,17 +437,17 @@ export default function AssetLibrary() {
                   href={selectedAsset.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex-1 sm:flex-initial inline-flex items-center justify-center space-x-1 px-3.5 py-2 rounded border border-neutral-200 text-xs font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
+                  className="flex-1 sm:flex-initial inline-flex items-center justify-center space-x-1.5 px-4 py-2 rounded-xl border border-amber-900/30 text-xs font-semibold text-stone-300 hover:bg-stone-800 transition-colors"
                 >
-                  <ExternalLink className="w-3.5 h-3.5 text-neutral-500" />
-                  <span>Open in Cloudinary URL</span>
+                  <ExternalLink className="w-4 h-4 text-stone-400" />
+                  <span>Open URL</span>
                 </a>
                 <a
                   href={selectedAsset.url}
                   download
-                  className="flex-1 sm:flex-initial inline-flex items-center justify-center space-x-1 px-4 py-2 rounded bg-neutral-900 text-white text-xs font-medium hover:bg-neutral-800 transition-colors"
+                  className="flex-1 sm:flex-initial inline-flex items-center justify-center space-x-2 px-5 py-2 rounded-xl luxury-gradient-button text-stone-950 font-bold text-xs"
                 >
-                  <Download className="w-3.5 h-3.5" />
+                  <Download className="w-4 h-4" />
                   <span>Download</span>
                 </a>
               </div>

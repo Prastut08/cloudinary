@@ -1,11 +1,346 @@
 @import "tailwindcss";
 
 @layer base {
-  body {
-    background-color: #fafafa;
-    color: #171717;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  :root {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cormorant Garamond', 'Cinzel', serif;
+    letter-spacing: -0.01em;
+  }
+
+  /* Default Dark Mode: Deep Black & Electric Luxury Yellow */
+  html:not(.light) body {
+    background-color: #09090b;
+    color: #fef08a;
+    overflow-x: hidden;
+  }
+
+  /* Light Mode: Pure White & Soft Warm Beige Palette */
+  html.light body {
+    background-color: #ffffff;
+    color: #292524;
+    overflow-x: hidden;
+  }
+}
+
+/* ==========================================
+   PURE WHITE & BEIGE LIGHT MODE OVERRIDES
+   ========================================== */
+html.light {
+  color-scheme: light;
+}
+
+/* Base Body & Layout Elements */
+html.light body,
+html.light main,
+html.light div.bg-stone-950,
+html.light [class*="bg-stone-950"],
+html.light [class*="bg-neutral-950"],
+html.light [class*="bg-black"] {
+  background-color: #ffffff !important;
+}
+
+/* Elevated Containers, Cards & Panels */
+html.light .bg-stone-900,
+html.light .bg-neutral-900,
+html.light .bg-stone-800,
+html.light [class*="bg-stone-900"],
+html.light [class*="bg-neutral-900"],
+html.light [class*="bg-stone-800"],
+html.light [class*="bg-red-950"],
+html.light [class*="bg-amber-950"] {
+  background-color: #fcfaf7 !important;
+}
+
+/* Header (Navbar) & Sidebar White & Warm Beige Palette */
+html.light header {
+  background-color: #ffffff !important;
+  border-bottom-color: #e6ded1 !important;
+  box-shadow: 0 2px 14px -2px rgba(230, 222, 209, 0.4) !important;
+}
+
+html.light aside {
+  background-color: #fcfaf7 !important;
+  border-right-color: #e6ded1 !important;
+}
+
+html.light aside a {
+  color: #57534e !important;
+}
+
+html.light aside a.active {
+  background-color: #f5efe6 !important;
+  color: #1c1917 !important;
+  border-color: #d7ccc0 !important;
+  box-shadow: 0 2px 8px -1px rgba(215, 204, 192, 0.4) !important;
+}
+
+html.light aside a:hover:not(.active) {
+  background-color: #eee7db !important;
+  color: #1c1917 !important;
+}
+
+/* Form Controls, Inputs, Selects & Options */
+html.light input,
+html.light select,
+html.light textarea {
+  background-color: #ffffff !important;
+  color: #1c1917 !important;
+  border-color: #e6ded1 !important;
+}
+
+html.light select option {
+  background-color: #ffffff !important;
+  color: #1c1917 !important;
+}
+
+/* Modal Backdrops & Overlays (Soft Warm Beige Blur) */
+html.light [class*="bg-stone-950/85"],
+html.light [class*="bg-stone-950/80"],
+html.light [class*="bg-stone-950/90"],
+html.light [class*="bg-neutral-950/85"] {
+  background-color: rgba(245, 239, 230, 0.75) !important;
+}
+
+/* Media / Image containers */
+html.light .aspect-square,
+html.light .aspect-video,
+html.light [class*="aspect-"] {
+  background-color: #f5efe6 !important;
+  border-color: #e6ded1 !important;
+}
+
+/* Hover Background States */
+html.light [class*="hover:bg-stone-"]:hover,
+html.light [class*="hover:bg-stone-800"]:hover,
+html.light [class*="hover:bg-stone-900"]:hover,
+html.light [class*="hover:bg-stone-950"]:hover,
+html.light [class*="hover:bg-neutral-"]:hover,
+html.light [class*="hover:bg-black"]:hover,
+html.light [class*="hover:bg-red-900"]:hover {
+  background-color: #eee7db !important;
+}
+
+/* Table Headers and Rows */
+html.light table thead tr,
+html.light [class*="bg-stone-900/40"] {
+  background-color: #f5efe6 !important;
+  color: #44403c !important;
+}
+
+html.light table tbody tr:hover {
+  background-color: #eee7db !important;
+}
+
+/* Typography Overrides */
+html.light h1,
+html.light h2,
+html.light h3,
+html.light h4,
+html.light h5,
+html.light h6,
+html.light .text-white,
+html.light [class*="text-white"] {
+  color: #1c1917 !important;
+}
+
+html.light [class*="text-stone-100"],
+html.light [class*="text-stone-200"],
+html.light [class*="text-stone-300"],
+html.light [class*="text-neutral-100"],
+html.light [class*="text-neutral-200"],
+html.light [class*="text-neutral-300"] {
+  color: #44403c !important;
+}
+
+html.light [class*="text-stone-400"],
+html.light [class*="text-stone-500"],
+html.light [class*="text-neutral-400"],
+html.light [class*="text-neutral-500"] {
+  color: #78716c !important;
+}
+
+html.light [class*="text-amber-100"],
+html.light [class*="text-amber-200"],
+html.light [class*="text-amber-300"],
+html.light [class*="text-amber-400"],
+html.light [class*="text-yellow-100"],
+html.light [class*="text-yellow-200"],
+html.light [class*="text-yellow-300"],
+html.light [class*="text-yellow-400"] {
+  color: #57534e !important;
+}
+
+/* Border Overrides */
+html.light [class*="border-stone-800"],
+html.light [class*="border-stone-700"],
+html.light [class*="border-neutral-800"],
+html.light [class*="border-neutral-700"],
+html.light [class*="border-amber-900"] {
+  border-color: #e6ded1 !important;
+}
+
+/* Custom Scrollbars */
+html:not(.light) ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+html:not(.light) ::-webkit-scrollbar-track {
+  background: rgba(9, 9, 11, 0.8);
+}
+html:not(.light) ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(250, 204, 21, 0.6) 0%, rgba(234, 179, 8, 0.6) 100%);
+  border-radius: 9999px;
+}
+
+html.light ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+html.light ::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+html.light ::-webkit-scrollbar-thumb {
+  background: #d7ccc0;
+  border-radius: 9999px;
+}
+
+/* Glassmorphism Utilities - DARK MODE */
+html:not(.light) .glass-panel {
+  background: rgba(18, 18, 20, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(250, 204, 21, 0.25);
+}
+
+html:not(.light) .glass-panel-luxury {
+  background: linear-gradient(135deg, rgba(30, 26, 10, 0.88) 0%, rgba(12, 12, 14, 0.95) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(250, 204, 21, 0.4);
+}
+
+html:not(.light) .glass-card {
+  background: rgba(24, 24, 27, 0.78);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(250, 204, 21, 0.2);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html:not(.light) .glass-card:hover {
+  border-color: rgba(250, 204, 21, 0.65);
+  box-shadow: 0 14px 36px -8px rgba(250, 204, 21, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Glassmorphism Utilities - LIGHT MODE (Pure White & Soft Warm Beige) */
+html.light .glass-panel {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid #e6ded1 !important;
+  box-shadow: 0 4px 24px -2px rgba(230, 222, 209, 0.5) !important;
+}
+
+html.light .glass-panel-luxury {
+  background: linear-gradient(135deg, #ffffff 0%, #fcfaf7 50%, #f5efe6 100%) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid #d7ccc0 !important;
+  box-shadow: 0 8px 32px -4px rgba(215, 204, 192, 0.4) !important;
+}
+
+html.light .glass-card {
+  background: #ffffff !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid #e6ded1 !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html.light .glass-card:hover {
+  border-color: #d7ccc0 !important;
+  box-shadow: 0 14px 36px -8px rgba(215, 204, 192, 0.5) !important;
+  transform: translateY(-2px);
+}
+
+/* Gradients - DARK MODE */
+html:not(.light) .luxury-gradient-text {
+  background: linear-gradient(135deg, #FFFFFF 0%, #FEF08A 45%, #FACC15 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+html:not(.light) .luxury-gradient-bg {
+  background: linear-gradient(135deg, #FACC15 0%, #EAB308 50%, #CA8A04 100%);
+}
+
+html:not(.light) .luxury-gradient-button {
+  background: linear-gradient(135deg, #FACC15 0%, #EAB308 50%, #CA8A04 100%);
+  color: #09090b;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 22px -2px rgba(250, 204, 21, 0.45);
+}
+
+html:not(.light) .luxury-gradient-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #FEF08A 0%, #FACC15 50%, #EAB308 100%);
+  box-shadow: 0 6px 28px 0px rgba(250, 204, 21, 0.7);
+  transform: translateY(-1px);
+}
+
+/* Gradients - LIGHT MODE (Pure White & Creamy Beige Only) */
+html.light .luxury-gradient-text {
+  background: linear-gradient(135deg, #1c1917 0%, #44403c 50%, #78716c 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+html.light .luxury-gradient-bg {
+  background: linear-gradient(135deg, #f5efe6 0%, #ebe2d3 50%, #e0d4c1 100%) !important;
+  color: #1c1917 !important;
+  border: 1px solid #d7ccc0 !important;
+}
+
+html.light .luxury-gradient-button {
+  background: linear-gradient(135deg, #f5efe6 0%, #ebe2d3 50%, #e0d4c1 100%) !important;
+  color: #1c1917 !important;
+  font-weight: 700 !important;
+  border: 1px solid #d7ccc0 !important;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 18px -2px rgba(215, 204, 192, 0.5) !important;
+}
+
+html.light .luxury-gradient-button * {
+  color: #1c1917 !important;
+}
+
+html.light .luxury-gradient-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ffffff 0%, #f5efe6 50%, #ebe2d3 100%) !important;
+  box-shadow: 0 6px 22px 0px rgba(215, 204, 192, 0.7) !important;
+  transform: translateY(-1px);
+}
+
+.luxury-gradient-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Ambient Radial Glows */
+html:not(.light) .radial-glow-crimson {
+  background: radial-gradient(circle at 50% 0%, rgba(250, 204, 21, 0.2) 0%, rgba(234, 179, 8, 0.06) 50%, transparent 80%);
+}
+
+html:not(.light) .radial-glow-amber {
+  background: radial-gradient(circle at 100% 100%, rgba(254, 240, 138, 0.18) 0%, rgba(250, 204, 21, 0.06) 50%, transparent 80%);
+}
+
+html.light .radial-glow-crimson {
+  background: radial-gradient(circle at 50% 0%, rgba(245, 239, 230, 0.7) 0%, rgba(235, 226, 211, 0.3) 50%, transparent 80%);
+}
+
+html.light .radial-glow-amber {
+  background: radial-gradient(circle at 100% 100%, rgba(250, 246, 240, 0.7) 0%, rgba(235, 226, 211, 0.3) 50%, transparent 80%);
 }
