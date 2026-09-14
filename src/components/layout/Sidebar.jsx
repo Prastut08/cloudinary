@@ -19,9 +19,9 @@ export default function Sidebar() {
 
   const navItems = [
     { label: 'Dashboard', path: '/', icon: Package },
-    { label: 'Products', path: '/products', icon: Grid },
-    { label: 'Asset Library', path: '/assets', icon: Image },
-    { label: 'Social Factory', path: '/social-factory', icon: Sparkles },
+    { label: 'Generated Content', path: '/products', icon: Grid },
+    { label: 'Media Library', path: '/assets', icon: Image },
+    { label: 'Content Factory', path: '/social-factory', icon: Sparkles },
   ];
 
   return (

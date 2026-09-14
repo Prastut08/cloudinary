@@ -7,7 +7,7 @@ import { uploadProductMedia } from '../services/api';
 export default function UploadProduct() {
   const navigate = useNavigate();
   const [productName, setProductName] = useState('');
-  const [category, setCategory] = useState('Footwear');
+  const [category, setCategory] = useState('General Photo');
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -32,6 +32,10 @@ export default function UploadProduct() {
     setSelectedFile(file);
     const url = URL.createObjectURL(file);
     setPreviewUrl(url);
+    if (!productName.trim()) {
+      const cleanName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+      setProductName(cleanName.charAt(0).toUpperCase() + cleanName.slice(1));
+    }
   };
 
   const handleDrop = (e) => {
@@ -60,9 +64,9 @@ export default function UploadProduct() {
       // Direct call to Express Backend (Authentication token attached automatically)
       const response = await uploadProductMedia(productName.trim(), category, selectedFile);
       
-      // Navigate to Processing screen with created product details
+      // Navigate to Social Factory / Processing screen with created media details
       if (response && response.productId) {
-        navigate('/processing', {
+        navigate('/social-factory?product=' + response.productId, {
           state: {
             productId: response.productId,
             productName: productName.trim(),
@@ -81,9 +85,9 @@ export default function UploadProduct() {
     <div className="max-w-3xl mx-auto space-y-8">
       {/* Page Header */}
       <div className="border-b border-neutral-200 pb-5">
-        <h1 className="text-xl font-bold text-neutral-900 tracking-tight">Create product assets</h1>
+        <h1 className="text-xl font-bold text-neutral-900 tracking-tight">Create Content</h1>
         <p className="text-xs text-neutral-500 mt-1">
-          Upload a raw product image and generate optimized media variants for every sales channel.
+          Upload an image once. Choose where you want to use it across social, web, personal, and commerce channels.
         </p>
       </div>
 
@@ -95,20 +99,20 @@ export default function UploadProduct() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Product Meta Section */}
+        {/* Media Meta Section */}
         <div className="bg-white border border-neutral-200 rounded p-6 space-y-4">
           <h2 className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
-            1. Product Information
+            1. Media Information
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-medium text-neutral-700 mb-1">
-                Product Name
+                Title / Name
               </label>
               <input
                 type="text"
-                placeholder="e.g. Leather Minimalist Sneaker"
+                placeholder="e.g. Summer Vacation, Product Shoot, Event Poster"
                 value={productName}
                 onChange={(e) => setProductName(e.target.value)}
                 disabled={isUploading}
@@ -119,7 +123,7 @@ export default function UploadProduct() {
 
             <div>
               <label className="block text-xs font-medium text-neutral-700 mb-1">
-                Category
+                Media Classification / Use Case
               </label>
               <select
                 value={category}
@@ -127,11 +131,13 @@ export default function UploadProduct() {
                 disabled={isUploading}
                 className="w-full px-3 py-1.5 bg-neutral-50 border border-neutral-200 rounded text-xs text-neutral-800 focus:outline-none focus:border-neutral-400 transition-colors disabled:opacity-50"
               >
-                <option value="Footwear">Footwear</option>
-                <option value="Accessories">Accessories</option>
-                <option value="Bags & Luggage">Bags & Luggage</option>
-                <option value="Electronics">Electronics</option>
-                <option value="Apparel">Apparel</option>
+                <option value="General Photo">General Photo</option>
+                <option value="Product">Product / Commerce</option>
+                <option value="Portrait">Portrait / Person</option>
+                <option value="Landscape">Landscape / Travel</option>
+                <option value="Food">Food & Dining</option>
+                <option value="Event">Event / Celebration</option>
+                <option value="Artwork">Artwork / Poster</option>
               </select>
             </div>
           </div>
@@ -140,7 +146,7 @@ export default function UploadProduct() {
         {/* Upload Dropzone Section */}
         <div className="bg-white border border-neutral-200 rounded p-6 space-y-4">
           <h2 className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
-            2. Master Product Image
+            2. Master Media Source
           </h2>
 
           {!previewUrl ? (
@@ -184,10 +190,10 @@ export default function UploadProduct() {
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-neutral-900 truncate max-w-xs sm:max-w-md">
-                    {selectedFile?.name || 'Selected product image'}
+                    {selectedFile?.name || 'Selected media image'}
                   </p>
                   <p className="text-[11px] text-neutral-400 mt-0.5">
-                    {(selectedFile?.size ? (selectedFile.size / (1024 * 1024)).toFixed(2) : '1.2')} MB • Ready for processing
+                    {(selectedFile?.size ? (selectedFile.size / (1024 * 1024)).toFixed(2) : '1.2')} MB • Ready for format generation
                   </p>
                 </div>
               </div>
@@ -229,7 +235,7 @@ export default function UploadProduct() {
               </>
             ) : (
               <>
-                <span>Generate Assets</span>
+                <span>Create Formats</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </>
             )}

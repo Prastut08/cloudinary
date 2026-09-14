@@ -253,3 +253,205 @@ export const calculateCommerceReadiness = ({ qualityScore, watermark, isProductS
     ],
   };
 };
+
+/**
+ * PHASE 9 — SMART SOCIAL MEDIA CONTENT FACTORY PRESETS
+ * Centralized platform preset configuration mapping 9 social/web/profile targets to Cloudinary transformation rules.
+ */
+export const socialPresets = {
+  instagramPost: {
+    type: 'instagramPost',
+    name: 'Instagram Post',
+    platform: 'Instagram',
+    category: 'Social',
+    specs: '1080 × 1080',
+    width: 1080,
+    height: 1080,
+    format: 'jpg',
+    sourceType: 'background-removed-cutout',
+    transform: (publicId) => cloudinary.url(publicId, {
+      transformation: [
+        { effect: 'background_removal' },
+        { width: 860, height: 860, crop: 'fit' },
+        { width: 1080, height: 1080, crop: 'lpad', gravity: 'center', background: 'rgb:f8fafc', fetch_format: 'auto', quality: 'auto' }
+      ]
+    })
+  },
+  instagramPortrait: {
+    type: 'instagramPortrait',
+    name: 'Instagram Portrait',
+    platform: 'Instagram',
+    category: 'Social',
+    specs: '1080 × 1350',
+    width: 1080,
+    height: 1350,
+    format: 'jpg',
+    sourceType: 'background-removed-cutout',
+    transform: (publicId) => cloudinary.url(publicId, {
+      transformation: [
+        { effect: 'background_removal' },
+        { width: 880, height: 1100, crop: 'fit' },
+        { width: 1080, height: 1350, crop: 'lpad', gravity: 'center', background: 'rgb:f8fafc', fetch_format: 'auto', quality: 'auto' }
+      ]
+    })
+  },
+  instagramStory: {
+    type: 'instagramStory',
+    name: 'Instagram Story / TikTok',
+    platform: 'Instagram',
+    category: 'Social',
+    specs: '1080 × 1920',
+    width: 1080,
+    height: 1920,
+    format: 'jpg',
+    sourceType: 'background-removed-cutout',
+    transform: (publicId) => cloudinary.url(publicId, {
+      transformation: [
+        { effect: 'background_removal' },
+        { width: 840, height: 1500, crop: 'fit' },
+        { width: 1080, height: 1920, crop: 'lpad', gravity: 'center', background: 'rgb:f1f5f9', fetch_format: 'auto', quality: 'auto' }
+      ]
+    })
+  },
+  youtubeThumbnail: {
+    type: 'youtubeThumbnail',
+    name: 'YouTube Thumbnail',
+    platform: 'YouTube',
+    category: 'Social',
+    specs: '1280 × 720',
+    width: 1280,
+    height: 720,
+    format: 'jpg',
+    sourceType: 'background-removed-cutout',
+    transform: (publicId) => cloudinary.url(publicId, {
+      transformation: [
+        { effect: 'background_removal' },
+        { width: 680, height: 600, crop: 'fit' },
+        { width: 1280, height: 720, crop: 'lpad', gravity: 'center', background: 'rgb:0f172a', fetch_format: 'auto', quality: 'auto' }
+      ]
+    })
+  },
+  socialSquare: {
+    type: 'socialSquare',
+    name: 'Generic Social Square',
+    platform: 'Generic Social',
+    category: 'Social',
+    specs: '1080 × 1080',
+    width: 1080,
+    height: 1080,
+    format: 'jpg',
+    sourceType: 'background-removed-cutout',
+    transform: (publicId) => cloudinary.url(publicId, {
+      transformation: [
+        { effect: 'background_removal' },
+        { width: 860, height: 860, crop: 'fit' },
+        { width: 1080, height: 1080, crop: 'lpad', gravity: 'center', background: 'white', fetch_format: 'auto', quality: 'auto' }
+      ]
+    })
+  },
+  socialLandscape: {
+    type: 'socialLandscape',
+    name: 'Social Landscape Share',
+    platform: 'Twitter / LinkedIn',
+    category: 'Social',
+    specs: '1200 × 630',
+    width: 1200,
+    height: 630,
+    format: 'jpg',
+    sourceType: 'background-removed-cutout',
+    transform: (publicId) => cloudinary.url(publicId, {
+      transformation: [
+        { effect: 'background_removal' },
+        { width: 650, height: 530, crop: 'fit' },
+        { width: 1200, height: 630, crop: 'lpad', gravity: 'center', background: 'rgb:f8fafc', fetch_format: 'auto', quality: 'auto' }
+      ]
+    })
+  },
+  websiteDesktop: {
+    type: 'websiteDesktop',
+    name: 'Website Desktop Hero Banner',
+    platform: 'Web',
+    category: 'Web',
+    specs: '1920 × 600',
+    width: 1920,
+    height: 600,
+    format: 'webp',
+    sourceType: 'background-removed-cutout',
+    transform: (publicId) => cloudinary.url(publicId, {
+      transformation: [
+        { effect: 'background_removal' },
+        { width: 850, height: 500, crop: 'fit' },
+        { width: 1920, height: 600, crop: 'lpad', gravity: 'east', background: 'rgb:f8fafc', fetch_format: 'auto', quality: 'auto' }
+      ]
+    })
+  },
+  websiteMobile: {
+    type: 'websiteMobile',
+    name: 'Website Mobile Banner',
+    platform: 'Web',
+    category: 'Web',
+    specs: '600 × 450',
+    width: 600,
+    height: 450,
+    format: 'webp',
+    sourceType: 'background-removed-cutout',
+    transform: (publicId) => cloudinary.url(publicId, {
+      transformation: [
+        { effect: 'background_removal' },
+        { width: 480, height: 360, crop: 'fit' },
+        { width: 600, height: 450, crop: 'lpad', gravity: 'center', background: 'rgb:f8fafc', fetch_format: 'auto', quality: 'auto' }
+      ]
+    })
+  },
+  profile: {
+    type: 'profile',
+    name: 'Profile / Avatar Thumbnail',
+    platform: 'Profile',
+    category: 'Profile',
+    specs: '800 × 800',
+    width: 800,
+    height: 800,
+    format: 'jpg',
+    sourceType: 'background-removed-cutout',
+    transform: (publicId) => cloudinary.url(publicId, {
+      transformation: [
+        { effect: 'background_removal' },
+        { width: 640, height: 640, crop: 'fit' },
+        { width: 800, height: 800, crop: 'lpad', gravity: 'center', background: 'white', fetch_format: 'auto', quality: 'auto' }
+      ]
+    })
+  }
+};
+
+/**
+ * Generate selected social media content factory formats using centralized presets
+ */
+export const generateSocialFormats = (publicId, selectedKeys = []) => {
+  const keysToProcess = selectedKeys.length > 0 ? selectedKeys : Object.keys(socialPresets);
+  const results = [];
+
+  keysToProcess.forEach((key) => {
+    const preset = socialPresets[key];
+    if (preset) {
+      const generatedUrl = preset.transform(publicId);
+      results.push({
+        type: preset.type,
+        name: preset.name,
+        platform: preset.platform,
+        category: preset.category,
+        specs: preset.specs,
+        width: preset.width,
+        height: preset.height,
+        format: preset.format,
+        url: generatedUrl,
+        publicId: publicId,
+        sourceType: preset.sourceType,
+        sourceAssetId: publicId,
+        createdAt: new Date().toISOString()
+      });
+    }
+  });
+
+  return results;
+};
+

@@ -14,7 +14,7 @@ const allowedOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
 app.use(
   cors({
     origin: allowedOrigin,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
   })
 );

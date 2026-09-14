@@ -32,15 +32,16 @@ export default function Dashboard() {
     const ecoCount = p.assets?.ecommerce?.length || 0;
     const socCount = p.assets?.social?.length || 0;
     const webCount = p.assets?.web?.length || 0;
-    return acc + ecoCount + socCount + webCount + (p.originalAsset ? 1 : 0);
+    const facCount = p.assets?.socialFactory?.length || 0;
+    return acc + ecoCount + socCount + webCount + facCount + (p.originalAsset ? 1 : 0);
   }, 0);
   const processingCount = products.filter(p => p.processingStatus === 'processing' || p.processingStatus === 'uploading').length;
   const readyCount = products.filter(p => p.processingStatus === 'completed' || p.processingStatus === 'partial').length;
 
   const statCards = [
-    { label: 'Products', value: totalProducts, icon: Package, note: 'User catalog' },
-    { label: 'Generated Assets', value: totalAssets, icon: Layers, note: 'Cloudinary processed media' },
-    { label: 'Ready Assets', value: readyCount, icon: CheckCircle2, note: 'Processed & available' },
+    { label: 'Media Items', value: totalProducts, icon: Package, note: 'Uploaded media' },
+    { label: 'Generated Formats', value: totalAssets, icon: Layers, note: 'Transformed outputs' },
+    { label: 'Ready Content', value: readyCount, icon: CheckCircle2, note: 'Available to export' },
     { label: 'Processing', value: processingCount, icon: Clock, note: 'Active operations' },
   ];
 
@@ -50,15 +51,15 @@ export default function Dashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-200 pb-5">
         <div>
           <h1 className="text-xl font-bold text-neutral-900 tracking-tight">
-            Welcome, {currentUser?.email?.split('@')[0] || 'Merchant'}
+            One upload. Every format.
           </h1>
           <p className="text-xs text-neutral-500 mt-1">
-            Manage your product media and generated assets across all channels.
+            Turn any image into content for social, web, commerce, profiles, and more.
           </p>
         </div>
         <Button onClick={() => navigate('/upload')} size="md" className="gap-1.5 self-start sm:self-auto">
           <Plus className="w-4 h-4" />
-          <span>Upload Product</span>
+          <span>Create Content</span>
         </Button>
       </div>
 
@@ -88,21 +89,21 @@ export default function Dashboard() {
             <UploadCloud className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-neutral-900">Transform a new product image</h3>
-            <p className="text-xs text-neutral-500 mt-0.5">Upload a raw photo to run Cloudinary background removal & smart cropping.</p>
+            <h3 className="text-sm font-semibold text-neutral-900">Transform any image</h3>
+            <p className="text-xs text-neutral-500 mt-0.5">Upload once to create multi-channel social, web, and personal content formats.</p>
           </div>
         </div>
         <Button onClick={() => navigate('/upload')} variant="secondary" size="md">
-          Upload Product
+          Create Content
         </Button>
       </div>
 
-      {/* Products Section */}
+      {/* Products/Media Section */}
       <div className="bg-white border border-neutral-200 rounded overflow-hidden">
         <div className="px-6 py-4 border-b border-neutral-200 flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-semibold text-neutral-900">Your Product Catalog</h3>
-            <p className="text-xs text-neutral-500 mt-0.5">Media assets uploaded to your account</p>
+            <h3 className="text-sm font-semibold text-neutral-900">Recent Media</h3>
+            <p className="text-xs text-neutral-500 mt-0.5">Media items uploaded to your account</p>
           </div>
           {products.length > 0 && (
             <Button onClick={() => navigate('/products')} variant="ghost" size="sm" className="gap-1 text-neutral-600">
@@ -115,14 +116,14 @@ export default function Dashboard() {
         {loading ? (
           <div className="p-12 text-center text-xs text-neutral-500 flex items-center justify-center gap-2">
             <Loader2 className="w-4 h-4 animate-spin text-neutral-900" />
-            <span>Loading user products from database...</span>
+            <span>Loading user media from database...</span>
           </div>
         ) : products.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="border-b border-neutral-100 bg-neutral-50/50 text-neutral-500 font-medium">
-                  <th className="py-3 px-6">Product</th>
+                  <th className="py-3 px-6">Media Item</th>
                   <th className="py-3 px-6">Category</th>
                   <th className="py-3 px-6">Status</th>
                   <th className="py-3 px-6 text-right">Action</th>
@@ -167,13 +168,13 @@ export default function Dashboard() {
               <ImageIcon className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-sm font-semibold text-neutral-900">No products yet</h4>
+              <h4 className="text-sm font-semibold text-neutral-900">No content yet</h4>
               <p className="text-xs text-neutral-500 mt-1">
-                Upload your first product to start generating commerce assets.
+                Upload your first image to generate formats for social, web, and personal use.
               </p>
             </div>
             <Button onClick={() => navigate('/upload')} size="sm">
-              Upload Product
+              Create Content
             </Button>
           </div>
         )}

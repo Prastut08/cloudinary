@@ -71,14 +71,14 @@ export default function ProductsList() {
       {/* Header */}
       <div className="flex items-center justify-between border-b border-neutral-200 pb-5">
         <div>
-          <h1 className="text-xl font-bold text-neutral-900 tracking-tight">Product Catalog</h1>
+          <h1 className="text-xl font-bold text-neutral-900 tracking-tight">Generated Content Catalog</h1>
           <p className="text-xs text-neutral-500 mt-1">
-            Manage master product uploads and Cloudinary media channels.
+            Manage master media uploads and Cloudinary content channels.
           </p>
         </div>
         <Button onClick={() => navigate('/upload')} size="md" className="gap-1.5">
           <Plus className="w-3.5 h-3.5" />
-          <span>Upload Product</span>
+          <span>Create Content</span>
         </Button>
       </div>
 

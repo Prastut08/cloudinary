@@ -33,6 +33,18 @@ export default function SocialFactory() {
     { key: 'profile', name: 'Profile / Avatar Thumbnail', category: 'Profile', defaultChecked: true },
   ];
 
+  const SMART_PACKS = [
+    { id: 'all', name: 'ALL FORMATS', keys: FORMAT_PRESETS.map((p) => p.key) },
+    { id: 'social', name: 'SOCIAL PACK', keys: ['instagramPost', 'instagramPortrait', 'instagramStory', 'youtubeThumbnail', 'socialSquare', 'socialLandscape'] },
+    { id: 'web', name: 'WEB PACK', keys: ['websiteDesktop', 'websiteMobile'] },
+    { id: 'personal', name: 'PERSONAL PACK', keys: ['profile', 'socialSquare'] },
+    { id: 'commerce', name: 'COMMERCE PACK', keys: ['instagramPost', 'socialSquare', 'websiteMobile'] },
+  ];
+
+  const applyPackPreset = (packKeys) => {
+    setSelectedFormatKeys(packKeys);
+  };
+
   const [selectedFormatKeys, setSelectedFormatKeys] = useState(
     FORMAT_PRESETS.map((p) => p.key)
   );
@@ -103,6 +115,20 @@ export default function SocialFactory() {
     }
   };
 
+  const [isDownloadingZip, setIsDownloadingZip] = useState(false);
+
+  const handleDownloadAllZip = async () => {
+    if (!selectedProductId || !selectedProduct) return;
+    setIsDownloadingZip(true);
+    try {
+      await downloadProductZipArchive(selectedProductId, selectedProduct.name);
+    } catch (err) {
+      alert(err.message || 'ZIP download failed');
+    } finally {
+      setIsDownloadingZip(false);
+    }
+  };
+
   const socialFactoryAssets = selectedProduct?.assets?.socialFactory || [];
 
   // Group assets by category
@@ -147,13 +173,23 @@ export default function SocialFactory() {
               )}
             </Button>
             <Button
-              onClick={() => downloadProductZipArchive(selectedProductId, selectedProduct.name)}
+              onClick={handleDownloadAllZip}
+              disabled={isDownloadingZip}
               variant="secondary"
               size="md"
               className="gap-1.5"
             >
-              <Download className="w-4 h-4" />
-              <span>Download All</span>
+              {isDownloadingZip ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Preparing ZIP...</span>
+                </>
+              ) : (
+                <>
+                  <Download className="w-4 h-4" />
+                  <span>Download All Formats</span>
+                </>
+              )}
             </Button>
           </div>
         )}
@@ -227,24 +263,44 @@ export default function SocialFactory() {
                   </div>
                 </div>
 
-                {/* Preset Format Checkboxes */}
-                <div className="md:col-span-8 space-y-3">
-                  <div className="flex items-center justify-between">
+                {/* Preset Format Checkboxes & Smart Packs */}
+                <div className="md:col-span-8 space-y-4">
+                  <div>
+                    <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block mb-2">
+                      Smart Presets
+                    </span>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {SMART_PACKS.map((pack) => (
+                        <button
+                          key={pack.id}
+                          type="button"
+                          onClick={() => applyPackPreset(pack.keys)}
+                          className="px-2.5 py-1 text-[10px] font-mono font-semibold rounded border border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-700 transition-colors"
+                        >
+                          {pack.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-neutral-100">
                     <span className="text-xs font-bold text-neutral-900 uppercase">
                       Select Formats to Generate
                     </span>
-                    <button
-                      onClick={() =>
-                        setSelectedFormatKeys(
-                          selectedFormatKeys.length === FORMAT_PRESETS.length
-                            ? []
-                            : FORMAT_PRESETS.map((p) => p.key)
-                        )
-                      }
-                      className="text-[11px] text-neutral-500 hover:text-neutral-900 underline font-medium"
-                    >
-                      {selectedFormatKeys.length === FORMAT_PRESETS.length ? 'Deselect All' : 'Select All'}
-                    </button>
+                    <div className="space-x-3 text-[11px] font-medium">
+                      <button
+                        onClick={() => setSelectedFormatKeys(FORMAT_PRESETS.map((p) => p.key))}
+                        className="text-neutral-600 hover:text-neutral-900 underline"
+                      >
+                        Select All
+                      </button>
+                      <button
+                        onClick={() => setSelectedFormatKeys([])}
+                        className="text-neutral-600 hover:text-neutral-900 underline"
+                      >
+                        Clear
+                      </button>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-neutral-50 p-4 rounded border border-neutral-200 text-xs">

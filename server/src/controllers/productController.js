@@ -7,6 +7,7 @@ import {
   searchCloudinaryAssets,
   deleteCloudinaryFolderAssets,
   calculateCommerceReadiness,
+  generateSocialFormats,
 } from '../services/cloudinaryService.js';
 import { adminDb } from '../config/firebaseAdmin.js';
 import { FieldValue } from 'firebase-admin/firestore';
@@ -979,6 +980,15 @@ export const downloadProductZip = async (req, res, next) => {
       }
     });
 
+    (productDoc.assets?.socialFactory || []).forEach((ast) => {
+      if (ast.url) {
+        filesToCompress.push({
+          url: ast.url,
+          zipPath: `${safeName}/social-factory/${ast.type || 'variant'}.${ast.format || 'jpg'}`,
+        });
+      }
+    });
+
     if (filesToCompress.length === 0) {
       return res.status(400).json({ error: 'NoAssets', message: 'No assets available for this product.' });
     }
@@ -1010,3 +1020,108 @@ export const downloadProductZip = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * POST /api/products/:id/social-factory
+ * Smart Social Media Content Factory controller
+ * Generates derived social/web/profile variants without re-running AI operations.
+ */
+export const generateSocialMediaFormats = async (req, res, next) => {
+  try {
+    const { uid } = req.user;
+    const { id } = req.params;
+    const { selectedFormats = [] } = req.body;
+
+    // Fetch product with ownership verification
+    let productDoc = null;
+    let isMemoryOnly = false;
+
+    if (memoryProductStore.has(id)) {
+      const p = memoryProductStore.get(id);
+      if (!p.userId || p.userId === uid) {
+        productDoc = { id, ...p };
+        isMemoryOnly = true;
+      }
+    }
+
+    if (!productDoc) {
+      try {
+        const doc = await adminDb.collection('products').doc(id).get();
+        if (doc.exists) {
+          const data = doc.data();
+          if (!data.userId || data.userId === uid) {
+            productDoc = { id: doc.id, ...data };
+          }
+        }
+      } catch (fsErr) {
+        if (!fsErr.message?.includes('NOT_FOUND') && fsErr.code !== 5) {
+          console.warn('[FIRESTORE GET NOTICE]:', fsErr.message);
+        }
+      }
+    }
+
+    // Ultimate fallback if uploaded during current session
+    if (!productDoc) {
+      productDoc = {
+        id,
+        userId: uid,
+        originalAsset: { publicId: `products/${uid}/${id}/original` }
+      };
+    }
+
+    const publicId = productDoc.originalAsset?.publicId || `products/${uid}/${id}/original`;
+
+    // Generate derived Cloudinary formats for selected keys
+    const newSocialFormats = generateSocialFormats(publicId, selectedFormats);
+
+    // Merge generated formats into existing product.assets.socialFactory array
+    const currentSocialFactory = productDoc.assets?.socialFactory || [];
+    const updatedSocialFactory = [...currentSocialFactory];
+
+    newSocialFormats.forEach((newFormat) => {
+      const existingIdx = updatedSocialFactory.findIndex((f) => f.type === newFormat.type);
+      if (existingIdx >= 0) {
+        updatedSocialFactory[existingIdx] = newFormat;
+      } else {
+        updatedSocialFactory.push(newFormat);
+      }
+    });
+
+    const updatedAssets = {
+      ...(productDoc.assets || {}),
+      socialFactory: updatedSocialFactory,
+    };
+
+    // Update memory store
+    memoryProductStore.set(id, {
+      ...productDoc,
+      assets: updatedAssets,
+    });
+
+    // Update Firestore DB asynchronously with merge: true
+    try {
+      await adminDb.collection('products').doc(id).set({
+        assets: updatedAssets,
+        updatedAt: FieldValue.serverTimestamp(),
+      }, { merge: true });
+    } catch (fsErr) {
+      if (!fsErr.message?.includes('NOT_FOUND') && fsErr.code !== 5) {
+        console.warn('[FIRESTORE UPDATE NOTICE]: Could not update socialFactory:', fsErr.message);
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Successfully generated ${newSocialFormats.length} social format(s).`,
+      allSocialFactoryAssets: updatedSocialFactory,
+      data: {
+        productId: id,
+        generatedFormats: newSocialFormats,
+        allSocialFormats: updatedSocialFactory,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+

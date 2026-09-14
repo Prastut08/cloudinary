@@ -331,10 +331,10 @@ export default function ProductDetails() {
             <div>
               <div className="flex items-center space-x-2">
                 <h1 className="text-lg font-bold text-neutral-900 tracking-tight">{product.name}</h1>
-                <Badge variant="neutral">{product.category}</Badge>
+                <Badge variant="neutral">{product.category || 'General Photo'}</Badge>
               </div>
               <p className="text-xs text-neutral-400 font-mono mt-1">
-                Generated Assets: <span className="font-semibold text-neutral-800">{totalAssetsCount} available</span>
+                Media Details & Formats: <span className="font-semibold text-neutral-800">{totalAssetsCount} available</span>
               </p>
               <p className="text-xs text-neutral-500 mt-1">
                 Cloudinary Public ID: <span className="font-mono text-neutral-700">{product.originalAsset?.publicId || 'N/A'}</span>
