@@ -1,12 +1,23 @@
 import { auth } from '../lib/firebase';
 
-// Centralized API Base URL supporting VITE_API_URL and VITE_API_BASE_URL
-const rawBaseUrl = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
-const cleanBaseUrl = rawBaseUrl.replace(/\/+$/, '');
-const API_BASE_URL = cleanBaseUrl.endsWith('/api') ? cleanBaseUrl : `${cleanBaseUrl}/api`;
+// Centralized API Base URL normalization helper
+const normalizeApiUrl = (envVal) => {
+  if (!envVal || typeof envVal !== 'string') return '';
+  let str = envVal.trim();
+  // Strip accidental quotes or Vercel "value:" prefix artifacts
+  str = str.replace(/^["']|["']$/g, '');
+  if (str.toLowerCase().startsWith('value:')) {
+    str = str.substring(6).trim();
+  }
+  str = str.replace(/\/+$/, '');
+  return str;
+};
+
+const rawBaseUrl = normalizeApiUrl(import.meta.env.VITE_API_URL) || normalizeApiUrl(import.meta.env.VITE_API_BASE_URL) || 'http://localhost:5000';
+const API_BASE_URL = rawBaseUrl.endsWith('/api') ? rawBaseUrl : `${rawBaseUrl}/api`;
 
 if (import.meta.env.DEV) {
-  console.log('[API CONFIG]: Centralized API Base URL ->', API_BASE_URL);
+  console.log('[API CONFIG]: Normalized API Base URL ->', API_BASE_URL);
 }
 
 /**
