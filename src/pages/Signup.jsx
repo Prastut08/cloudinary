@@ -41,7 +41,7 @@ export default function Signup() {
       navigate('/dashboard');
     } catch (err) {
       setError(err.message);
-    } font-sans finally {
+    } finally {
       setSubmitting(false);
     }
   };
