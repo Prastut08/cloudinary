@@ -12,6 +12,7 @@ import {
 import { adminDb } from '../config/firebaseAdmin.js';
 import { FieldValue } from 'firebase-admin/firestore';
 import crypto from 'crypto';
+import JSZip from 'jszip';
 import { createNotification } from '../services/notificationService.js';
 
 // Memory cache store for instant retrieval
@@ -397,7 +398,6 @@ export const regenerateAsset = async (req, res, next) => {
       relatedId: id,
       relatedType: 'product',
     });
-
     res.status(200).json({
       success: true,
       variantKey,
@@ -541,7 +541,6 @@ export const searchUserAssets = async (req, res, next) => {
           });
         }
       }
-
       // Social pack
       (prod.assets?.social || []).forEach((ast, idx) => {
         allGeneratedAssets.push({

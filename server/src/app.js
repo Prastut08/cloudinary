@@ -26,7 +26,6 @@ const allowedOrigins = Array.from(new Set([...defaultAllowedOrigins, ...envOrigi
 
 const corsOptions = {
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps, curl, health checks)
     if (!origin) return callback(null, true);
 
     const normalizedOrigin = origin.trim().replace(/\/+$/, '');
@@ -45,7 +44,6 @@ const corsOptions = {
 
 // Handle Preflight OPTIONS requests explicitly across all routes
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
 
 app.use(express.json());
 

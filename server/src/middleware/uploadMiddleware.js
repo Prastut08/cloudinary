@@ -22,6 +22,7 @@ export const uploadSingleImage = multer({
   fileFilter
 }).single('image');
 
+
 const allowedVideoMimeTypes = [
   'video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/webm', 'video/mpeg', 'video/3gpp', 'video/ogg'
 ];
@@ -64,5 +65,4 @@ export const uploadSingleVideo = (req, res, next) => {
     next();
   });
 };
-
 

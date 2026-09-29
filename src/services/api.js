@@ -349,16 +349,18 @@ export const generateSocialFormatsAPI = async (id, selectedFormats = []) => {
   return response.json();
 };
 
+
 /**
  * POST /api/videos/upload
  * Send video file and title to Express backend
  */
-export const uploadVideoMedia = async (title, file) => {
+export const uploadVideoMedia = async (title, file, description = '') => {
   const token = await getIdToken();
   const formData = new FormData();
   formData.append('title', title);
   formData.append('name', title);
   formData.append('video', file);
+  if (description) formData.append('description', description);
 
   const response = await fetch(`${API_BASE_URL}/videos/upload`, {
     method: 'POST',

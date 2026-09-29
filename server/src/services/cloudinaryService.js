@@ -475,18 +475,19 @@ export const uploadVideoBufferToCloudinary = (buffer, options = {}) => {
 };
 
 /**
- * Generate platform-ready video transformation variants using Cloudinary URL system:
- * 1. Reels 9:16 (1080x1920 target, fill, gravity auto, f_auto, q_auto)
- * 2. Square 1:1 (1080x1080 target, fill, gravity auto, f_auto, q_auto)
- * 3. YouTube 16:9 (1920x1080 target, fill, gravity auto, f_auto, q_auto)
- * 4. Web 16:9 (1280x720 target, fill, gravity auto, f_auto, q_auto)
+ * Generate platform-ready video transformation variants using Cloudinary URL system
+ * Supports description-based prompt analysis & intelligent smart cropping (g_auto)
+ * Ratios: 9:16 (Reels), 4:5 (Portrait), 1:1 (Square), 16:9 (YouTube), 4:3 (Web), 21:9 (Cinematic)
  */
-export const generateVideoVariants = (publicId) => {
-  return {
-    reels916: {
+export const generateVideoVariants = (publicId, description = '', selectedRatios = null) => {
+  const descLower = (description || '').trim().toLowerCase();
+  const hasDescription = Boolean(descLower);
+
+  const ratioCatalog = [
+    {
       type: 'reels916',
       name: 'Instagram / Reels',
-      platform: 'Instagram Reels',
+      platform: 'Instagram Reels / TikTok / Shorts',
       aspectRatio: '9:16',
       specs: '1080 × 1920',
       width: 1080,
@@ -494,21 +495,35 @@ export const generateVideoVariants = (publicId) => {
       crop: 'fill',
       gravity: 'auto',
       format: 'mp4',
-      url: cloudinary.url(publicId, {
-        resource_type: 'video',
-        format: 'mp4',
-        width: 1080,
-        height: 1920,
-        crop: 'fill',
-        gravity: 'auto',
-        quality: 'auto',
-        secure: true,
-      }),
+      keywords: ['reels', 'tiktok', 'shorts', 'story', 'stories', '9:16', 'vertical', 'mobile', 'portrait', 'instagram', 'reel'],
+      transformation: [
+        { width: 1080, height: 1920, crop: 'fill', gravity: 'auto' },
+        { fetch_format: 'mp4' },
+        { quality: 'auto' },
+      ],
     },
-    square11: {
+    {
+      type: 'portrait45',
+      name: 'Instagram / Portrait',
+      platform: 'Instagram Feed / LinkedIn / Facebook',
+      aspectRatio: '4:5',
+      specs: '1080 × 1350',
+      width: 1080,
+      height: 1350,
+      crop: 'fill',
+      gravity: 'auto',
+      format: 'mp4',
+      keywords: ['portrait', 'linkedin', 'facebook', '4:5', 'feed', 'post'],
+      transformation: [
+        { width: 1080, height: 1350, crop: 'fill', gravity: 'auto' },
+        { fetch_format: 'mp4' },
+        { quality: 'auto' },
+      ],
+    },
+    {
       type: 'square11',
       name: 'Instagram / Square',
-      platform: 'Instagram Feed',
+      platform: 'Instagram Feed / Square Catalog',
       aspectRatio: '1:1',
       specs: '1080 × 1080',
       width: 1080,
@@ -516,21 +531,17 @@ export const generateVideoVariants = (publicId) => {
       crop: 'fill',
       gravity: 'auto',
       format: 'mp4',
-      url: cloudinary.url(publicId, {
-        resource_type: 'video',
-        format: 'mp4',
-        width: 1080,
-        height: 1080,
-        crop: 'fill',
-        gravity: 'auto',
-        quality: 'auto',
-        secure: true,
-      }),
+      keywords: ['square', '1:1', 'catalog', 'grid', 'ecommerce', 'feed'],
+      transformation: [
+        { width: 1080, height: 1080, crop: 'fill', gravity: 'auto' },
+        { fetch_format: 'mp4' },
+        { quality: 'auto' },
+      ],
     },
-    youtube169: {
+    {
       type: 'youtube169',
-      name: 'YouTube',
-      platform: 'YouTube',
+      name: 'YouTube / Widescreen',
+      platform: 'YouTube / Widescreen TV',
       aspectRatio: '16:9',
       specs: '1920 × 1080',
       width: 1920,
@@ -538,45 +549,113 @@ export const generateVideoVariants = (publicId) => {
       crop: 'fill',
       gravity: 'auto',
       format: 'mp4',
-      url: cloudinary.url(publicId, {
-        resource_type: 'video',
-        format: 'mp4',
-        width: 1920,
-        height: 1080,
-        crop: 'fill',
-        gravity: 'auto',
-        quality: 'auto',
-        secure: true,
-      }),
+      keywords: ['youtube', 'widescreen', '16:9', 'tv', 'video', 'desktop', 'horizontal', 'landscape'],
+      transformation: [
+        { width: 1920, height: 1080, crop: 'fill', gravity: 'auto' },
+        { fetch_format: 'mp4' },
+        { quality: 'auto' },
+      ],
     },
-    web169: {
-      type: 'web169',
-      name: 'Landscape / Web',
-      platform: 'Website / Web',
-      aspectRatio: '16:9',
-      specs: '1280 × 720',
-      width: 1280,
-      height: 720,
+    {
+      type: 'web43',
+      name: 'Web / Catalog Banner',
+      platform: 'Website / Tablet Banner',
+      aspectRatio: '4:3',
+      specs: '1200 × 900',
+      width: 1200,
+      height: 900,
       crop: 'fill',
       gravity: 'auto',
-      format: 'auto',
-      url: cloudinary.url(publicId, {
-        resource_type: 'video',
-        transformation: [
-          { width: 1280, height: 720, crop: 'fill', gravity: 'auto' },
-          { fetch_format: 'auto:video' },
-          { quality: 'auto' }
-        ],
-        secure: true,
-      }),
+      format: 'mp4',
+      keywords: ['web', 'banner', '4:3', 'tablet', 'site', 'hero', 'header', 'store', 'website'],
+      transformation: [
+        { width: 1200, height: 900, crop: 'fill', gravity: 'auto' },
+        { fetch_format: 'mp4' },
+        { quality: 'auto' },
+      ],
     },
-  };
+    {
+      type: 'cinematic219',
+      name: 'Cinematic / Ultra-wide',
+      platform: 'Ultra-wide Cinema Hero',
+      aspectRatio: '21:9',
+      specs: '1920 × 822',
+      width: 1920,
+      height: 822,
+      crop: 'fill',
+      gravity: 'auto',
+      format: 'mp4',
+      keywords: ['cinema', 'cinematic', '21:9', 'ultrawide', 'ultra-wide', 'film', 'header', 'movie', 'trailer'],
+      transformation: [
+        { width: 1920, height: 822, crop: 'fill', gravity: 'auto' },
+        { fetch_format: 'mp4' },
+        { quality: 'auto' },
+      ],
+    },
+  ];
+
+  // Identify matching ratios from description
+  const matchedTypes = new Set();
+  if (hasDescription) {
+    ratioCatalog.forEach((item) => {
+      if (item.keywords.some((kw) => descLower.includes(kw))) {
+        matchedTypes.add(item.type);
+      }
+    });
+  }
+
+  const results = {};
+
+  ratioCatalog.forEach((item) => {
+    let shouldInclude = false;
+    let isMatched = false;
+
+    if (Array.isArray(selectedRatios) && selectedRatios.length > 0) {
+      shouldInclude = selectedRatios.includes(item.type);
+    } else if (hasDescription && matchedTypes.size > 0) {
+      shouldInclude = matchedTypes.has(item.type);
+      isMatched = true;
+    } else {
+      // Default fallback: include all ratios
+      shouldInclude = true;
+      isMatched = hasDescription ? matchedTypes.has(item.type) : false;
+    }
+
+    if (shouldInclude) {
+      const generatedUrl = cloudinary.url(publicId, {
+        resource_type: 'video',
+        transformation: item.transformation,
+        format: 'mp4',
+        secure: true,
+      });
+
+      const generatedPosterUrl = cloudinary.url(publicId, {
+        resource_type: 'video',
+        transformation: item.transformation,
+        format: 'jpg',
+        secure: true,
+      });
+
+      results[item.type] = {
+        type: item.type,
+        name: item.name,
+        platform: item.platform,
+        aspectRatio: item.aspectRatio,
+        specs: item.specs,
+        width: item.width,
+        height: item.height,
+        crop: item.crop,
+        gravity: item.gravity,
+        format: item.format,
+        url: generatedUrl,
+        posterUrl: generatedPosterUrl,
+        aiRecommended: isMatched,
+        aiMatchReason: isMatched ? `Generated for "${item.name}" based on your description` : null,
+      };
+    }
+  });
+
+  return results;
 };
-
-
-
-
-
-
 
 

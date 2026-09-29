@@ -10,8 +10,15 @@
     letter-spacing: -0.01em;
   }
 
-  /* Default Light Mode: Pure White & Soft Warm Beige Palette */
-  body {
+  /* Default Dark Mode: Deep Black & Electric Luxury Yellow */
+  html:not(.light) body {
+    background-color: #09090b;
+    color: #fef08a;
+    overflow-x: hidden;
+  }
+
+  /* Light Mode: Pure White & Soft Warm Beige Palette */
+  html.light body {
     background-color: #ffffff;
     color: #292524;
     overflow-x: hidden;
