@@ -447,64 +447,51 @@ export default function VideoPipeline() {
                       </span>
                     </div>
 
-                    <div className="text-[10px] text-[#A8A29E] -mt-1 mb-1">
-                      {conf.desc} · {conf.target}
-                    </div>
-
-                    {/* VIDEO CONTAINER WITH AUTOMATIC PREVIEW PICTURE POSTER FOR THIS RATIO */}
-                    <div className="h-60 bg-[#0F172A] rounded border border-[#E6DED1] overflow-hidden flex items-center justify-center relative group">
-                      {variantUrl ? (
-                        <video
-                          src={variantUrl}
-                          poster={posterUrl}
-                          controls
-                          playsInline
-                          preload="metadata"
-                          onLoadedData={(e) => { if (e.target.currentTime === 0) e.target.currentTime = 0.1; }}
-                          className="max-h-full max-w-full object-contain"
-                        />
-                      ) : (
-                        <span className="text-xs text-[#94A3B8]">Processing...</span>
-                      )}
-
-                      {/* Aspect Ratio Badge Overlay */}
-                      <span className="absolute top-2 left-2 text-[9px] bg-black/70 text-white px-1.5 py-0.5 rounded font-mono backdrop-blur-xs border border-white/10">
-                        {conf.aspectRatio}
-                      </span>
-                    </div>
-
-                    {variantData?.aiMatchReason && (
-                      <p className="text-[9px] text-[#92400E] bg-[#FFFBEB] px-2 py-1 rounded">
-                        🎯 {variantData.aiMatchReason}
+                    {/* Card Content without embedded video player */}
+                    <div className="space-y-2">
+                      <p className="text-xs text-[#78716C] leading-relaxed">
+                        {conf.desc} · <span className="font-mono">{conf.target}</span>
                       </p>
-                    )}
 
-                    {/* STANDARD ACTIONS BAR */}
-                    {variantUrl && (
-                      <div className="flex items-center justify-between text-xs pt-1 border-t border-[#E6DED1]">
-                        <a
-                          href={variantUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-[#1C1917] underline text-[11px] font-medium"
+                      {variantData?.aiMatchReason && (
+                        <p className="text-[10px] text-[#92400E] bg-[#FFFBEB] px-2 py-1 rounded border border-[#FDE68A]/60">
+                          🎯 {variantData.aiMatchReason}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* ACTIONS BAR */}
+                    {variantUrl ? (
+                      <div className="flex items-center justify-between text-xs pt-2 border-t border-[#E6DED1]">
+                        <button
+                          type="button"
+                          onClick={() => window.open(variantUrl, '_blank', 'noopener,noreferrer')}
+                          className="px-3 py-1.5 text-xs font-medium rounded border border-[#E6DED1] bg-white text-[#1C1917] hover:bg-[#F5EFE6] transition-colors cursor-pointer"
                         >
                           Open Video ↗
-                        </a>
-
-                        <button
-                          onClick={() => handleCopyUrl(variantUrl, conf.key)}
-                          className="text-[#78716C] hover:text-[#1C1917] underline text-[11px]"
-                        >
-                          {copiedKey === conf.key ? 'Copied!' : 'Copy URL'}
                         </button>
 
-                        <a
-                          href={variantUrl}
-                          download
-                          className="text-[#C9A227] hover:underline text-[11px] font-semibold"
-                        >
-                          Download
-                        </a>
+                        <div className="flex items-center space-x-3">
+                          <button
+                            type="button"
+                            onClick={() => handleCopyUrl(variantUrl, conf.key)}
+                            className="text-[#78716C] hover:text-[#1C1917] underline text-xs cursor-pointer"
+                          >
+                            {copiedKey === conf.key ? 'Copied' : 'Copy URL'}
+                          </button>
+
+                          <a
+                            href={variantUrl}
+                            download
+                            className="px-3 py-1.5 text-xs font-semibold rounded bg-[#1C1917] text-[#FFFDF9] hover:bg-[#2C2723] transition-colors"
+                          >
+                            Download {conf.key === 'web169' ? 'Video' : 'MP4'}
+                          </a>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="pt-2 border-t border-[#E6DED1] text-xs text-[#78716C]">
+                        Processing variant...
                       </div>
                     )}
                   </div>
