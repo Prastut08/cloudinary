@@ -15,6 +15,7 @@ import ProductsList from './pages/ProductsList';
 import AssetLibrary from './pages/AssetLibrary';
 import ShareProduct from './pages/ShareProduct';
 import SocialFactory from './pages/SocialFactory';
+import VideoPipeline from './pages/VideoPipeline';
 
 export default function App() {
   return (
@@ -60,6 +61,7 @@ export default function App() {
             <Route path="/products/:id" element={<ProductDetails />} />
             <Route path="/assets" element={<AssetLibrary />} />
             <Route path="/social-factory" element={<SocialFactory />} />
+            <Route path="/video-pipeline" element={<VideoPipeline />} />
           </Route>
 
           {/* Fallback Redirect */}

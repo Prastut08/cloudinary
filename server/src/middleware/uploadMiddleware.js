@@ -21,3 +21,24 @@ export const uploadSingleImage = multer({
   },
   fileFilter
 }).single('image');
+
+const allowedVideoMimeTypes = [
+  'video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/webm', 'video/mpeg', 'video/3gpp', 'video/ogg'
+];
+
+const videoFileFilter = (req, file, cb) => {
+  if (allowedVideoMimeTypes.includes(file.mimetype) || file.mimetype.startsWith('video/')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Unsupported video type. Only MP4, MOV, AVI, WEBM, and standard video formats are allowed.'), false);
+  }
+};
+
+export const uploadSingleVideo = multer({
+  storage,
+  limits: {
+    fileSize: 100 * 1024 * 1024 // 100MB limit for video upload
+  },
+  fileFilter: videoFileFilter
+}).single('video');
+

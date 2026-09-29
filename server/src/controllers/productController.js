@@ -514,6 +514,34 @@ export const searchUserAssets = async (req, res, next) => {
         });
       });
 
+      // Video variants handling
+      if (prod.mediaType === 'video' || prod.variants) {
+        if (prod.variants) {
+          Object.values(prod.variants).forEach((v, vIdx) => {
+            allGeneratedAssets.push({
+              id: `${prod.id}_vid_${vIdx}`,
+              productId: prod.id,
+              productName: prod.title || prod.name || 'Video Asset',
+              userId: prod.userId,
+              title: v.name || v.type,
+              type: v.type,
+              platform: v.platform || 'Video',
+              category: 'Video',
+              publicId: v.publicId || prod.originalAsset?.publicId,
+              url: v.url,
+              width: v.width || 1080,
+              height: v.height || 1920,
+              specs: v.specs || `${v.width || 1080} × ${v.height || 1920}`,
+              format: 'mp4',
+              bytes: null,
+              mediaType: 'video',
+              tags: pTags,
+              createdAt: prod.createdAt,
+            });
+          });
+        }
+      }
+
       // Social pack
       (prod.assets?.social || []).forEach((ast, idx) => {
         allGeneratedAssets.push({

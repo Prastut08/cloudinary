@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import cloudinaryRoutes from './routes/cloudinaryRoutes.js';
 import productRoutes from './routes/productRoutes.js';
+import videoRoutes from './routes/videoRoutes.js';
 import { notFoundHandler, errorHandler } from './middleware/errorMiddleware.js';
 
 dotenv.config();
@@ -33,6 +34,7 @@ app.get('/api/health', (req, res) => {
 // Routes
 app.use('/api/cloudinary', cloudinaryRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/videos', videoRoutes);
 
 // 404 & Centralized Error Handlers
 app.use(notFoundHandler);
