@@ -12,13 +12,20 @@ const memoryVideoStore = new Map();
 
 /**
  * POST /api/videos/upload
- * Upload source video to Cloudinary preserving original, compute metadata, generate 4 variants
+ * Upload source video to Cloudinary preserving original, compute metadata,
+ * generate description-driven platform variants via Cloudinary transformations.
+ *
+ * Body fields (multipart):
+ *   - title / name: Video title
+ *   - description: Free-text describing use case (e.g. "reels, youtube, cinematic hero")
+ *   - video: Video file (multer field)
  */
 export const uploadVideo = async (req, res, next) => {
   try {
     const { uid } = req.user;
-    const { name = 'Video Asset', title } = req.body;
+    const { name = 'Video Asset', title, description = '' } = req.body;
     const videoTitle = (title || name || 'Video Asset').trim();
+    const videoDescription = (description || '').trim();
 
     if (!req.file) {
       return res.status(400).json({ error: 'Validation', message: 'Video file is required.' });
@@ -38,6 +45,7 @@ export const uploadVideo = async (req, res, next) => {
         context: {
           video_id: videoId,
           title: videoTitle,
+          description: videoDescription,
           user_id: uid,
         },
       });
@@ -50,27 +58,30 @@ export const uploadVideo = async (req, res, next) => {
       });
     }
 
-    // 2. Generate 4 platform video variants using Cloudinary URL-based transformation system
-    const variants = generateVideoVariants(uploadResult.public_id);
+    // 2. Generate platform video variants using Cloudinary URL-based transformation system
+    //    Pass description for AI-driven keyword matching of relevant aspect ratios
+    const variants = generateVideoVariants(uploadResult.public_id, videoDescription);
 
-    console.log('[Video Pipeline] Cloudinary Ingestion:', {
+    const variantKeys = Object.keys(variants);
+    console.log(`[Video Pipeline] Cloudinary Ingestion — ${variantKeys.length} variants generated`);
+    console.log('[Video Pipeline] Upload result:', {
       public_id: uploadResult.public_id,
       resource_type: uploadResult.resource_type,
       format: uploadResult.format,
       duration: uploadResult.duration,
       bytes: uploadResult.bytes,
     });
-    console.log('[Video Pipeline] Reels MP4 URL:', variants.reels916.url);
-    console.log('[Video Pipeline] Square MP4 URL:', variants.square11.url);
-    console.log('[Video Pipeline] YouTube MP4 URL:', variants.youtube169.url);
-    console.log('[Video Pipeline] Web Video URL:', variants.web169.url);
-
+    console.log('[Video Pipeline] Description:', videoDescription || '(none — all ratios generated)');
+    variantKeys.forEach((key) => {
+      console.log(`[Video Pipeline] ${key} (${variants[key].aspectRatio}) URL:`, variants[key].url);
+    });
 
     // 3. Construct Video Document
     const videoDoc = {
       userId: uid,
       title: videoTitle,
       name: videoTitle,
+      description: videoDescription,
       mediaType: 'video',
       category: 'Video',
       cloudinaryPublicId: uploadResult.public_id,
@@ -90,12 +101,7 @@ export const uploadVideo = async (req, res, next) => {
           : '16:9',
       },
 
-      variants: {
-        reels916: variants.reels916,
-        square11: variants.square11,
-        youtube169: variants.youtube169,
-        web169: variants.web169,
-      },
+      variants,
 
       processingStatus: 'completed',
       createdAt: new Date().toISOString(),
@@ -113,7 +119,7 @@ export const uploadVideo = async (req, res, next) => {
         userId: uid,
         type: 'processing_complete',
         title: 'Video variants ready',
-        message: `Your video "${videoTitle}" is ready with 4 platform variants.`,
+        message: `Your video "${videoTitle}" is ready with ${variantKeys.length} platform variants.`,
         relatedId: videoId,
         relatedType: 'product',
       });
@@ -186,11 +192,13 @@ export const getVideoById = async (req, res, next) => {
 /**
  * POST /api/videos/:id/variants
  * Generate or re-derive platform video variants for an existing video asset
+ * Accepts optional body: { description } to re-run AI keyword matching
  */
 export const generateVariantsForVideo = async (req, res, next) => {
   try {
     const { uid } = req.user;
     const { id } = req.params;
+    const { description = '' } = req.body || {};
 
     let publicId = null;
     let videoDoc = null;
@@ -214,29 +222,29 @@ export const generateVariantsForVideo = async (req, res, next) => {
       return res.status(404).json({ error: 'NotFound', message: 'Video asset not found.' });
     }
 
-    const variants = generateVideoVariants(publicId);
+    // Use provided description or fallback to stored description
+    const effectiveDescription = description || videoDoc.description || '';
+    const variants = generateVideoVariants(publicId, effectiveDescription);
 
     // Update memory & Firestore
     const updatedVariants = {
       ...(videoDoc.variants || {}),
-      reels916: variants.reels916,
-      square11: variants.square11,
-      youtube169: variants.youtube169,
-      web169: variants.web169,
+      ...variants,
     };
 
     if (memoryVideoStore.has(id)) {
-      memoryVideoStore.set(id, { ...videoDoc, variants: updatedVariants });
+      memoryVideoStore.set(id, { ...videoDoc, variants: updatedVariants, description: effectiveDescription });
     }
 
     adminDb.collection('products').doc(id).set({
       variants: updatedVariants,
+      description: effectiveDescription,
       updatedAt: FieldValue.serverTimestamp(),
     }, { merge: true }).catch(() => {});
 
     res.status(200).json({
       success: true,
-      message: 'Platform video variants updated.',
+      message: `Platform video variants updated (${Object.keys(variants).length} generated).`,
       variants: updatedVariants,
     });
   } catch (error) {
