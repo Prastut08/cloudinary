@@ -500,7 +500,7 @@ export const generateVideoVariants = (publicId) => {
         height: 1920,
         crop: 'fill',
         gravity: 'auto',
-        fetch_format: 'auto',
+        fetch_format: 'mp4',
         quality: 'auto',
         secure: true,
       }),
@@ -522,7 +522,7 @@ export const generateVideoVariants = (publicId) => {
         height: 1080,
         crop: 'fill',
         gravity: 'auto',
-        fetch_format: 'auto',
+        fetch_format: 'mp4',
         quality: 'auto',
         secure: true,
       }),
@@ -544,7 +544,7 @@ export const generateVideoVariants = (publicId) => {
         height: 1080,
         crop: 'fill',
         gravity: 'auto',
-        fetch_format: 'auto',
+        fetch_format: 'mp4',
         quality: 'auto',
         secure: true,
       }),
@@ -566,13 +566,14 @@ export const generateVideoVariants = (publicId) => {
         height: 720,
         crop: 'fill',
         gravity: 'auto',
-        fetch_format: 'auto',
+        fetch_format: 'mp4',
         quality: 'auto',
         secure: true,
       }),
     },
   };
 };
+
 
 
 
