@@ -53,6 +53,19 @@ export const uploadVideo = async (req, res, next) => {
     // 2. Generate 4 platform video variants using Cloudinary URL-based transformation system
     const variants = generateVideoVariants(uploadResult.public_id);
 
+    console.log('[Video Pipeline] Cloudinary Ingestion:', {
+      public_id: uploadResult.public_id,
+      resource_type: uploadResult.resource_type,
+      format: uploadResult.format,
+      duration: uploadResult.duration,
+      bytes: uploadResult.bytes,
+    });
+    console.log('[Video Pipeline] Reels MP4 URL:', variants.reels916.url);
+    console.log('[Video Pipeline] Square MP4 URL:', variants.square11.url);
+    console.log('[Video Pipeline] YouTube MP4 URL:', variants.youtube169.url);
+    console.log('[Video Pipeline] Web Video URL:', variants.web169.url);
+
+
     // 3. Construct Video Document
     const videoDoc = {
       userId: uid,
