@@ -34,11 +34,35 @@ const videoFileFilter = (req, file, cb) => {
   }
 };
 
-export const uploadSingleVideo = multer({
+const singleVideoMulter = multer({
   storage,
   limits: {
     fileSize: 100 * 1024 * 1024 // 100MB limit for video upload
   },
   fileFilter: videoFileFilter
 }).single('video');
+
+export const uploadSingleVideo = (req, res, next) => {
+  singleVideoMulter(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({
+          error: 'File Too Large',
+          message: 'Video file size exceeds the 100MB limit.'
+        });
+      }
+      return res.status(400).json({
+        error: 'Upload Error',
+        message: err.message
+      });
+    } else if (err) {
+      return res.status(400).json({
+        error: 'Invalid File',
+        message: err.message
+      });
+    }
+    next();
+  });
+};
+
 

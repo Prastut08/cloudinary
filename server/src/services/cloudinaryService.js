@@ -495,6 +495,7 @@ export const generateVideoVariants = (publicId) => {
       gravity: 'auto',
       url: cloudinary.url(publicId, {
         resource_type: 'video',
+        format: 'mp4',
         width: 1080,
         height: 1920,
         crop: 'fill',
@@ -516,6 +517,7 @@ export const generateVideoVariants = (publicId) => {
       gravity: 'auto',
       url: cloudinary.url(publicId, {
         resource_type: 'video',
+        format: 'mp4',
         width: 1080,
         height: 1080,
         crop: 'fill',
@@ -537,6 +539,7 @@ export const generateVideoVariants = (publicId) => {
       gravity: 'auto',
       url: cloudinary.url(publicId, {
         resource_type: 'video',
+        format: 'mp4',
         width: 1920,
         height: 1080,
         crop: 'fill',
@@ -558,6 +561,7 @@ export const generateVideoVariants = (publicId) => {
       gravity: 'auto',
       url: cloudinary.url(publicId, {
         resource_type: 'video',
+        format: 'mp4',
         width: 1280,
         height: 720,
         crop: 'fill',
@@ -569,5 +573,6 @@ export const generateVideoVariants = (publicId) => {
     },
   };
 };
+
 
 
