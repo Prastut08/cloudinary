@@ -348,3 +348,73 @@ export const generateSocialFormatsAPI = async (id, selectedFormats = []) => {
 
   return response.json();
 };
+
+
+/**
+ * POST /api/videos/upload
+ * Send video file and title to Express backend
+ */
+export const uploadVideoMedia = async (title, file) => {
+  const token = await getIdToken();
+  const formData = new FormData();
+  formData.append('title', title);
+  formData.append('name', title);
+  formData.append('video', file);
+
+  const response = await fetch(`${API_BASE_URL}/videos/upload`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    },
+    body: formData
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Failed to upload and process video.');
+  }
+
+  return response.json();
+};
+
+/**
+ * GET /api/videos/:id
+ * Retrieve video details by ID
+ */
+export const fetchVideoById = async (id) => {
+  const token = await getIdToken();
+  const response = await fetch(`${API_BASE_URL}/videos/${id}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Failed to fetch video details.');
+  }
+
+  return response.json();
+};
+
+/**
+ * POST /api/videos/:id/variants
+ * Trigger generation/refresh of video variants
+ */
+export const generateVideoVariantsAPI = async (id) => {
+  const token = await getIdToken();
+  const response = await fetch(`${API_BASE_URL}/videos/${id}/variants`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Failed to generate video variants.');
+  }
+
+  return response.json();
+};
+

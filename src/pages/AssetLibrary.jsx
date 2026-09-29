@@ -294,11 +294,15 @@ export default function AssetLibrary() {
             >
               {/* Asset Preview Container */}
               <div className="aspect-square bg-stone-950 border-b border-amber-900/20 relative overflow-hidden group flex items-center justify-center p-3">
-                <img
-                  src={asset.url}
-                  alt={asset.title}
-                  className="max-h-full max-w-full object-contain"
-                />
+                {asset.mediaType === 'video' || asset.format === 'mp4' ? (
+                  <video src={asset.url} controls={false} className="max-h-full max-w-full object-contain" />
+                ) : (
+                  <img
+                    src={asset.url}
+                    alt={asset.title}
+                    className="max-h-full max-w-full object-contain"
+                  />
+                )}
                 <span className="absolute top-3 left-3 text-[10px] font-bold px-2.5 py-1 rounded-full bg-stone-900/90 text-amber-300 border border-amber-500/30 backdrop-blur-md">
                   {asset.platform}
                 </span>

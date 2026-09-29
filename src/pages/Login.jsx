@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Button } from '../components/ui/UI';
-import { AlertCircle, Flame, Sparkles } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -18,7 +17,7 @@ export default function Login() {
     setSubmitting(true);
     try {
       await loginWithGoogle();
-      navigate('/');
+      navigate('/dashboard');
     } catch (err) {
       setError(err.message || 'Failed to sign in with Google.');
     } finally {
@@ -33,7 +32,7 @@ export default function Login() {
 
     try {
       await login(email, password);
-      navigate('/');
+      navigate('/dashboard');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -42,26 +41,21 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-950 flex items-center justify-center p-4 radial-glow-crimson radial-glow-amber relative overflow-hidden">
-      {/* Background Decorative Blur Orbs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-amber-600/10 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="w-full max-w-md glass-panel rounded-2xl p-8 shadow-2xl space-y-6 relative z-10 border border-amber-900/30">
+    <div className="min-h-screen bg-[#F7F3EA] text-[#191714] font-['Times_New_Roman',Times,serif] flex items-center justify-center p-4 antialiased selection:bg-[#DED6C9] selection:text-[#191714]">
+      <div className="w-full max-w-md bg-[#FFFDF9] border border-[#DED6C9] p-8 sm:p-10 space-y-6">
         {/* Brand Header */}
-        <div className="text-center space-y-3">
-          <div className="w-12 h-12 rounded-2xl luxury-gradient-bg mx-auto flex items-center justify-center text-stone-950 font-bold shadow-lg shadow-amber-500/20">
-            <Flame className="w-6 h-6 text-stone-950" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-extrabold luxury-gradient-text tracking-tight">Content Factory</h1>
-            <p className="text-xs text-stone-400 mt-1">Sign in to your premium AI Cloudinary studio</p>
-          </div>
+        <div className="text-center space-y-1.5">
+          <h1 className="text-3xl font-bold tracking-tight text-[#191714]">
+            Content Factory
+          </h1>
+          <p className="text-base text-[#716B62] font-normal">
+            Sign in to your workspace.
+          </p>
         </div>
 
         {error && (
-          <div className="p-3.5 bg-red-950/60 border border-red-800/60 rounded-xl text-red-300 text-xs flex items-start space-x-2.5">
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-400" />
+          <div className="p-3.5 bg-[#FFF5F5] border border-[#F5C6CB] text-[#721C24] text-xs font-sans flex items-start space-x-2.5">
+            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-[#721C24]" />
             <span>{error}</span>
           </div>
         )}
@@ -71,7 +65,7 @@ export default function Login() {
           type="button"
           onClick={handleGoogleLogin}
           disabled={submitting}
-          className="w-full flex items-center justify-center space-x-3 py-2.5 px-4 border border-amber-900/30 rounded-xl bg-stone-900/90 hover:bg-stone-800 text-stone-200 font-semibold text-xs transition-all duration-200 disabled:opacity-50 shadow-sm hover:border-amber-900/50"
+          className="w-full flex items-center justify-center space-x-3 py-3 px-4 border border-[#DED6C9] bg-[#FFFDF9] hover:bg-[#F2ECDE] text-[#191714] font-medium text-sm transition-all duration-200 disabled:opacity-50"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24">
             <path
@@ -94,44 +88,54 @@ export default function Login() {
           <span>Continue with Google</span>
         </button>
 
-        <div className="relative flex items-center justify-center my-3">
-          <div className="border-t border-amber-900/20 w-full" />
-          <span className="bg-stone-950/90 px-3 text-[10px] text-stone-500 uppercase font-mono tracking-widest absolute">or email</span>
+        <div className="relative flex items-center justify-center my-4">
+          <div className="border-t border-[#DED6C9] w-full" />
+          <span className="bg-[#FFFDF9] px-3 text-xs text-[#716B62] uppercase font-sans tracking-widest absolute">
+            or email
+          </span>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+        <form onSubmit={handleSubmit} className="space-y-4 text-sm">
           <div>
-            <label className="block font-medium text-stone-300 mb-1.5">Email Address</label>
+            <label className="block font-medium text-[#191714] mb-1.5">
+              Email Address
+            </label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@company.com"
-              className="w-full px-3.5 py-2.5 bg-stone-900/90 border border-amber-900/30 rounded-xl text-stone-100 placeholder-stone-500 focus:outline-none focus:border-amber-500/60 focus:ring-1 focus:ring-amber-500/30 transition-all"
+              className="w-full px-3.5 py-2.5 bg-[#FFFDF9] border border-[#DED6C9] text-[#191714] placeholder-[#A0988C] focus:outline-none focus:border-[#191714] transition-all font-sans text-xs"
             />
           </div>
 
           <div>
-            <label className="block font-medium text-stone-300 mb-1.5">Password</label>
+            <label className="block font-medium text-[#191714] mb-1.5">
+              Password
+            </label>
             <input
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full px-3.5 py-2.5 bg-stone-900/90 border border-amber-900/30 rounded-xl text-stone-100 placeholder-stone-500 focus:outline-none focus:border-amber-500/60 focus:ring-1 focus:ring-amber-500/30 transition-all"
+              className="w-full px-3.5 py-2.5 bg-[#FFFDF9] border border-[#DED6C9] text-[#191714] placeholder-[#A0988C] focus:outline-none focus:border-[#191714] transition-all font-sans text-xs"
             />
           </div>
 
-          <Button type="submit" disabled={submitting} className="w-full py-2.5 text-xs font-bold uppercase tracking-wider">
+          <button
+            type="submit"
+            disabled={submitting}
+            className="w-full py-3 text-sm font-medium bg-[#191714] text-[#F7F3EA] border border-[#191714] hover:bg-[#2C2723] transition-colors disabled:opacity-50 tracking-wide"
+          >
             {submitting ? 'Authenticating...' : 'Sign In'}
-          </Button>
+          </button>
         </form>
 
-        <div className="text-center text-xs text-stone-400 border-t border-amber-900/20 pt-4">
+        <div className="text-center text-sm text-[#716B62] border-t border-[#DED6C9] pt-5 font-normal">
           Don't have an account?{' '}
-          <Link to="/signup" className="font-semibold text-amber-400 hover:text-amber-300 underline">
+          <Link to="/signup" className="font-semibold text-[#191714] hover:underline">
             Create account
           </Link>
         </div>

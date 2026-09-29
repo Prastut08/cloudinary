@@ -33,7 +33,7 @@ export function PublicOnlyRoute({ children }) {
   }
 
   if (currentUser) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return children;

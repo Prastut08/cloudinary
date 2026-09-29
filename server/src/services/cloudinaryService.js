@@ -455,3 +455,121 @@ export const generateSocialFormats = (publicId, selectedKeys = []) => {
   return results;
 };
 
+/**
+ * Upload raw video buffer to Cloudinary using upload_stream with resource_type: 'video'
+ */
+export const uploadVideoBufferToCloudinary = (buffer, options = {}) => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        resource_type: 'video',
+        ...options,
+      },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      }
+    );
+    uploadStream.end(buffer);
+  });
+};
+
+/**
+ * Generate platform-ready video transformation variants using Cloudinary URL system:
+ * 1. Reels 9:16 (1080x1920 target, fill, gravity auto, f_auto, q_auto)
+ * 2. Square 1:1 (1080x1080 target, fill, gravity auto, f_auto, q_auto)
+ * 3. YouTube 16:9 (1920x1080 target, fill, gravity auto, f_auto, q_auto)
+ * 4. Web 16:9 (1280x720 target, fill, gravity auto, f_auto, q_auto)
+ */
+export const generateVideoVariants = (publicId) => {
+  return {
+    reels916: {
+      type: 'reels916',
+      name: 'Instagram / Reels',
+      platform: 'Instagram Reels',
+      aspectRatio: '9:16',
+      specs: '1080 × 1920',
+      width: 1080,
+      height: 1920,
+      crop: 'fill',
+      gravity: 'auto',
+      format: 'mp4',
+      url: cloudinary.url(publicId, {
+        resource_type: 'video',
+        format: 'mp4',
+        width: 1080,
+        height: 1920,
+        crop: 'fill',
+        gravity: 'auto',
+        quality: 'auto',
+        secure: true,
+      }),
+    },
+    square11: {
+      type: 'square11',
+      name: 'Instagram / Square',
+      platform: 'Instagram Feed',
+      aspectRatio: '1:1',
+      specs: '1080 × 1080',
+      width: 1080,
+      height: 1080,
+      crop: 'fill',
+      gravity: 'auto',
+      format: 'mp4',
+      url: cloudinary.url(publicId, {
+        resource_type: 'video',
+        format: 'mp4',
+        width: 1080,
+        height: 1080,
+        crop: 'fill',
+        gravity: 'auto',
+        quality: 'auto',
+        secure: true,
+      }),
+    },
+    youtube169: {
+      type: 'youtube169',
+      name: 'YouTube',
+      platform: 'YouTube',
+      aspectRatio: '16:9',
+      specs: '1920 × 1080',
+      width: 1920,
+      height: 1080,
+      crop: 'fill',
+      gravity: 'auto',
+      format: 'mp4',
+      url: cloudinary.url(publicId, {
+        resource_type: 'video',
+        format: 'mp4',
+        width: 1920,
+        height: 1080,
+        crop: 'fill',
+        gravity: 'auto',
+        quality: 'auto',
+        secure: true,
+      }),
+    },
+    web169: {
+      type: 'web169',
+      name: 'Landscape / Web',
+      platform: 'Website / Web',
+      aspectRatio: '16:9',
+      specs: '1280 × 720',
+      width: 1280,
+      height: 720,
+      crop: 'fill',
+      gravity: 'auto',
+      format: 'auto',
+      url: cloudinary.url(publicId, {
+        resource_type: 'video',
+        transformation: [
+          { width: 1280, height: 720, crop: 'fill', gravity: 'auto' },
+          { fetch_format: 'auto:video' },
+          { quality: 'auto' }
+        ],
+        secure: true,
+      }),
+    },
+  };
+};
+

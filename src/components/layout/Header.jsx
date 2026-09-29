@@ -2,10 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Search, Bell, Menu, Sun, Moon } from 'lucide-react';
 import { Button } from '../ui/UI';
+import { useNotifications } from '../../hooks/useNotifications';
+import NotificationPanel from '../NotificationPanel';
 
 export default function Header({ onMenuClick }) {
   const navigate = useNavigate();
-  const [theme, setTheme] = useState(() => localStorage.getItem('app-theme') || 'dark');
+  const [theme, setTheme] = useState(() => localStorage.getItem('app-theme') || 'light');
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+
+  const { unreadCount } = useNotifications();
 
   useEffect(() => {
     const root = document.documentElement;
@@ -47,7 +52,7 @@ export default function Header({ onMenuClick }) {
       </div>
 
       {/* Action Header Controls */}
-      <div className="flex items-center space-x-3 ml-4">
+      <div className="flex items-center space-x-3 ml-4 relative">
         {/* Single-Click Premium Theme Button */}
         <button
           onClick={toggleTheme}
@@ -67,10 +72,27 @@ export default function Header({ onMenuClick }) {
           )}
         </button>
 
-        <button className="p-2 text-stone-400 hover:text-amber-500 rounded-xl hover:bg-stone-500/10 transition-colors relative">
-          <Bell className="w-4 h-4" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
-        </button>
+        {/* Notification Bell Button */}
+        <div className="relative">
+          <button
+            onClick={() => setIsNotifOpen((prev) => !prev)}
+            className="p-2 text-stone-400 hover:text-amber-500 rounded-xl hover:bg-stone-500/10 transition-colors relative"
+            aria-label="Toggle notifications"
+          >
+            <Bell className="w-4 h-4" />
+            {unreadCount > 0 && (
+              <span className="absolute top-1 right-1 px-1.5 py-0.2 min-w-[18px] h-4 rounded-full bg-amber-500 text-stone-950 font-mono text-[10px] font-bold flex items-center justify-center border border-stone-950 animate-pulse">
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </span>
+            )}
+          </button>
+
+          {/* Notification Dropdown Panel */}
+          <NotificationPanel
+            isOpen={isNotifOpen}
+            onClose={() => setIsNotifOpen(false)}
+          />
+        </div>
 
         <div className="h-5 w-px border-r border-amber-900/20 hidden sm:block" />
 

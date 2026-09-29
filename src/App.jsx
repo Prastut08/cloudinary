@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute, PublicOnlyRoute } from './components/layout/ProtectedRoute';
 import AppLayout from './layouts/AppLayout';
 
+import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
@@ -14,12 +15,16 @@ import ProductsList from './pages/ProductsList';
 import AssetLibrary from './pages/AssetLibrary';
 import ShareProduct from './pages/ShareProduct';
 import SocialFactory from './pages/SocialFactory';
+import VideoPipeline from './pages/VideoPipeline';
 
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <Routes>
+          {/* Public Landing Page */}
+          <Route path="/" element={<Landing />} />
+
           {/* Public Share Route */}
           <Route path="/share/:shareToken" element={<ShareProduct />} />
 
@@ -49,13 +54,14 @@ export default function App() {
               </ProtectedRoute>
             }
           >
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/upload" element={<UploadProduct />} />
             <Route path="/processing" element={<Processing />} />
             <Route path="/products" element={<ProductsList />} />
             <Route path="/products/:id" element={<ProductDetails />} />
             <Route path="/assets" element={<AssetLibrary />} />
             <Route path="/social-factory" element={<SocialFactory />} />
+            <Route path="/video-pipeline" element={<VideoPipeline />} />
           </Route>
 
           {/* Fallback Redirect */}

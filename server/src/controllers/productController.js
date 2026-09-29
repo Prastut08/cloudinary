@@ -13,6 +13,7 @@ import { adminDb } from '../config/firebaseAdmin.js';
 import { FieldValue } from 'firebase-admin/firestore';
 import crypto from 'crypto';
 import JSZip from 'jszip';
+import { createNotification } from '../services/notificationService.js';
 
 // Memory cache store for instant retrieval
 const memoryProductStore = new Map();
@@ -247,6 +248,43 @@ export const uploadProduct = async (req, res, next) => {
     adminDb.collection('products').doc(productId).set({
       ...productDoc,
       createdAt: FieldValue.serverTimestamp(),
+    }).then(() => {
+      // Trigger product_created notification
+      createNotification({
+        userId: uid,
+        type: 'product_created',
+        title: 'Media added',
+        message: `Your media "${name.trim()}" has been added to the library.`,
+        relatedId: productId,
+        relatedType: 'product',
+      });
+
+      // Count generated assets
+      const totalGenerated =
+        (assetPacks.ecommerce?.length || 0) +
+        (assetPacks.social?.length || 0) +
+        (assetPacks.web?.length || 0);
+
+      // Trigger processing_complete / processing_partial notification
+      if (pipelineNotes.length > 0) {
+        createNotification({
+          userId: uid,
+          type: 'processing_partial',
+          title: 'Generation partially complete',
+          message: `${totalGenerated} assets are ready and ${pipelineNotes.length} need attention.`,
+          relatedId: productId,
+          relatedType: 'product',
+        });
+      } else {
+        createNotification({
+          userId: uid,
+          type: 'processing_complete',
+          title: 'Generation complete',
+          message: `Your media is ready with ${totalGenerated} generated formats.`,
+          relatedId: productId,
+          relatedType: 'product',
+        });
+      }
     }).catch((fsErr) => {
       if (!fsErr.message?.includes('NOT_FOUND')) {
         console.warn('[FIRESTORE WRITE NOTICE]: Database write deferred, payload memory cached.', fsErr.message);
@@ -351,6 +389,15 @@ export const regenerateAsset = async (req, res, next) => {
 
     const newUrl = regenerateSingleAssetUrl(publicId, variantKey);
 
+    // Trigger asset_regenerated notification
+    createNotification({
+      userId: uid,
+      type: 'asset_regenerated',
+      title: 'Asset regenerated',
+      message: `${variantKey} was regenerated successfully.`,
+      relatedId: id,
+      relatedType: 'product',
+    });
     res.status(200).json({
       success: true,
       variantKey,
@@ -467,6 +514,33 @@ export const searchUserAssets = async (req, res, next) => {
         });
       });
 
+      // Video variants handling
+      if (prod.mediaType === 'video' || prod.variants) {
+        if (prod.variants) {
+          Object.values(prod.variants).forEach((v, vIdx) => {
+            allGeneratedAssets.push({
+              id: `${prod.id}_vid_${vIdx}`,
+              productId: prod.id,
+              productName: prod.title || prod.name || 'Video Asset',
+              userId: prod.userId,
+              title: v.name || v.type,
+              type: v.type,
+              platform: v.platform || 'Video',
+              category: 'Video',
+              publicId: v.publicId || prod.originalAsset?.publicId,
+              url: v.url,
+              width: v.width || 1080,
+              height: v.height || 1920,
+              specs: v.specs || `${v.width || 1080} × ${v.height || 1920}`,
+              format: 'mp4',
+              bytes: null,
+              mediaType: 'video',
+              tags: pTags,
+              createdAt: prod.createdAt,
+            });
+          });
+        }
+      }
       // Social pack
       (prod.assets?.social || []).forEach((ast, idx) => {
         allGeneratedAssets.push({
@@ -656,6 +730,16 @@ export const deleteProduct = async (req, res, next) => {
       deleteCloudinaryFolderAssets(folderPath).catch(() => { });
     }
 
+    // Trigger product_deleted notification
+    createNotification({
+      userId: uid,
+      type: 'product_deleted',
+      title: 'Media deleted',
+      message: 'Product media and associated references were removed.',
+      relatedId: null,
+      relatedType: 'product',
+    });
+
     res.status(200).json({
       success: true,
       message: 'Product and associated media references deleted successfully.',
@@ -705,6 +789,14 @@ export const createProductShare = async (req, res, next) => {
     // Save share record in productShares collection
     try {
       await adminDb.collection('productShares').doc(shareToken).set(shareRecord);
+      createNotification({
+        userId: uid,
+        type: 'share_created',
+        title: 'Share link created',
+        message: `Public share link generated for "${productDoc.name || 'product'}".`,
+        relatedId: id,
+        relatedType: 'product',
+      });
     } catch (fsErr) {
       if (!fsErr.message?.includes('NOT_FOUND')) {
         console.warn('[FIRESTORE SHARE NOTICE]: Deferred share write.', fsErr.message);

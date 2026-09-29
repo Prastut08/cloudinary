@@ -328,6 +328,59 @@ html.light .luxury-gradient-button:hover:not(:disabled) {
   transform: translateY(0);
 }
 
+/* ==========================================
+   EDITORIAL CREAM VISUAL SYSTEM
+   ========================================== */
+.font-editorial {
+  font-family: "Times New Roman", Times, Georgia, serif !important;
+}
+
+.bg-editorial-cream {
+  background-color: #F7F3EA !important;
+}
+
+.bg-editorial-surface {
+  background-color: #FFFDF9 !important;
+}
+
+.text-editorial-main {
+  color: #191714 !important;
+}
+
+.text-editorial-muted {
+  color: #716B62 !important;
+}
+
+.border-editorial-beige {
+  border-color: #DED6C9 !important;
+}
+
+.editorial-button-primary {
+  background-color: #191714 !important;
+  color: #F7F3EA !important;
+  border: 1px solid #191714 !important;
+  font-family: "Times New Roman", Times, serif !important;
+  transition: all 0.2s ease;
+}
+
+.editorial-button-primary:hover {
+  background-color: #2C2723 !important;
+  border-color: #2C2723 !important;
+}
+
+.editorial-button-secondary {
+  background-color: #FFFDF9 !important;
+  color: #191714 !important;
+  border: 1px solid #DED6C9 !important;
+  font-family: "Times New Roman", Times, serif !important;
+  transition: all 0.2s ease;
+}
+
+.editorial-button-secondary:hover {
+  background-color: #F2ECDE !important;
+  border-color: #C5BBAA !important;
+}
+
 /* Ambient Radial Glows */
 html:not(.light) .radial-glow-crimson {
   background: radial-gradient(circle at 50% 0%, rgba(250, 204, 21, 0.2) 0%, rgba(234, 179, 8, 0.06) 50%, transparent 80%);
@@ -344,3 +397,4 @@ html.light .radial-glow-crimson {
 html.light .radial-glow-amber {
   background: radial-gradient(circle at 100% 100%, rgba(250, 246, 240, 0.7) 0%, rgba(235, 226, 211, 0.3) 50%, transparent 80%);
 }
+
