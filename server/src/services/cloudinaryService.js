@@ -493,12 +493,13 @@ export const generateVideoVariants = (publicId) => {
       height: 1920,
       crop: 'fill',
       gravity: 'auto',
+      format: 'mp4',
       url: cloudinary.url(publicId, {
         resource_type: 'video',
         format: 'mp4',
         transformation: [
           { width: 1080, height: 1920, crop: 'fill', gravity: 'auto' },
-          { fetch_format: 'auto:video' },
+          { fetch_format: 'mp4' },
           { quality: 'auto' }
         ],
         secure: true,
@@ -514,12 +515,13 @@ export const generateVideoVariants = (publicId) => {
       height: 1080,
       crop: 'fill',
       gravity: 'auto',
+      format: 'mp4',
       url: cloudinary.url(publicId, {
         resource_type: 'video',
         format: 'mp4',
         transformation: [
           { width: 1080, height: 1080, crop: 'fill', gravity: 'auto' },
-          { fetch_format: 'auto:video' },
+          { fetch_format: 'mp4' },
           { quality: 'auto' }
         ],
         secure: true,
@@ -535,12 +537,13 @@ export const generateVideoVariants = (publicId) => {
       height: 1080,
       crop: 'fill',
       gravity: 'auto',
+      format: 'mp4',
       url: cloudinary.url(publicId, {
         resource_type: 'video',
         format: 'mp4',
         transformation: [
           { width: 1920, height: 1080, crop: 'fill', gravity: 'auto' },
-          { fetch_format: 'auto:video' },
+          { fetch_format: 'mp4' },
           { quality: 'auto' }
         ],
         secure: true,
@@ -556,9 +559,9 @@ export const generateVideoVariants = (publicId) => {
       height: 720,
       crop: 'fill',
       gravity: 'auto',
+      format: 'auto',
       url: cloudinary.url(publicId, {
         resource_type: 'video',
-        format: 'mp4',
         transformation: [
           { width: 1280, height: 720, crop: 'fill', gravity: 'auto' },
           { fetch_format: 'auto:video' },
@@ -569,6 +572,8 @@ export const generateVideoVariants = (publicId) => {
     },
   };
 };
+
+
 
 
 
