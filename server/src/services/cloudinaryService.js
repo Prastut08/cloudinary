@@ -496,12 +496,11 @@ export const generateVideoVariants = (publicId) => {
       url: cloudinary.url(publicId, {
         resource_type: 'video',
         format: 'mp4',
-        width: 1080,
-        height: 1920,
-        crop: 'fill',
-        gravity: 'auto',
-        fetch_format: 'mp4',
-        quality: 'auto',
+        transformation: [
+          { width: 1080, height: 1920, crop: 'fill', gravity: 'auto' },
+          { fetch_format: 'auto:video' },
+          { quality: 'auto' }
+        ],
         secure: true,
       }),
     },
@@ -518,12 +517,11 @@ export const generateVideoVariants = (publicId) => {
       url: cloudinary.url(publicId, {
         resource_type: 'video',
         format: 'mp4',
-        width: 1080,
-        height: 1080,
-        crop: 'fill',
-        gravity: 'auto',
-        fetch_format: 'mp4',
-        quality: 'auto',
+        transformation: [
+          { width: 1080, height: 1080, crop: 'fill', gravity: 'auto' },
+          { fetch_format: 'auto:video' },
+          { quality: 'auto' }
+        ],
         secure: true,
       }),
     },
@@ -540,12 +538,11 @@ export const generateVideoVariants = (publicId) => {
       url: cloudinary.url(publicId, {
         resource_type: 'video',
         format: 'mp4',
-        width: 1920,
-        height: 1080,
-        crop: 'fill',
-        gravity: 'auto',
-        fetch_format: 'mp4',
-        quality: 'auto',
+        transformation: [
+          { width: 1920, height: 1080, crop: 'fill', gravity: 'auto' },
+          { fetch_format: 'auto:video' },
+          { quality: 'auto' }
+        ],
         secure: true,
       }),
     },
@@ -562,17 +559,17 @@ export const generateVideoVariants = (publicId) => {
       url: cloudinary.url(publicId, {
         resource_type: 'video',
         format: 'mp4',
-        width: 1280,
-        height: 720,
-        crop: 'fill',
-        gravity: 'auto',
-        fetch_format: 'mp4',
-        quality: 'auto',
+        transformation: [
+          { width: 1280, height: 720, crop: 'fill', gravity: 'auto' },
+          { fetch_format: 'auto:video' },
+          { quality: 'auto' }
+        ],
         secure: true,
       }),
     },
   };
 };
+
 
 
 
