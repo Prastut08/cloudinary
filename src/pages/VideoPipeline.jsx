@@ -121,7 +121,6 @@ export default function VideoPipeline() {
       aspectRatio: '9:16',
       target: '1080 × 1920',
       desc: 'Vertical 9:16 smart-cropped for Reels, TikTok & Shorts',
-      icon: '📱',
     },
     {
       key: 'portrait45',
@@ -129,7 +128,6 @@ export default function VideoPipeline() {
       aspectRatio: '4:5',
       target: '1080 × 1350',
       desc: 'Portrait 4:5 optimized for Instagram Feed & LinkedIn',
-      icon: '📸',
     },
     {
       key: 'square11',
@@ -137,7 +135,6 @@ export default function VideoPipeline() {
       aspectRatio: '1:1',
       target: '1080 × 1080',
       desc: 'Square 1:1 crop for Feed & Catalog',
-      icon: '⬜',
     },
     {
       key: 'youtube169',
@@ -145,7 +142,6 @@ export default function VideoPipeline() {
       aspectRatio: '16:9',
       target: '1920 × 1080',
       desc: 'Full HD 16:9 widescreen for YouTube & TV',
-      icon: '🎬',
     },
     {
       key: 'web43',
@@ -153,7 +149,6 @@ export default function VideoPipeline() {
       aspectRatio: '4:3',
       target: '1200 × 900',
       desc: 'Catalog banner format for web & tablet',
-      icon: '🖥️',
     },
     {
       key: 'cinematic219',
@@ -161,7 +156,6 @@ export default function VideoPipeline() {
       aspectRatio: '21:9',
       target: '1920 × 822',
       desc: 'Ultra-wide cinematic format for hero sections',
-      icon: '🎞️',
     },
   ];
 
@@ -425,11 +419,10 @@ export default function VideoPipeline() {
                 return (
                   <div
                     key={conf.key}
-                    className={`border rounded bg-[#FFFDF9] p-3 space-y-3 shadow-xs transition-all ${
-                      isAiPick
+                    className={`border rounded bg-[#FFFDF9] p-3 space-y-3 shadow-xs transition-all ${isAiPick
                         ? 'border-[#FDE68A] ring-1 ring-[#FDE68A]/40'
                         : 'border-[#E6DED1]'
-                    }`}
+                      }`}
                   >
                     {/* Header */}
                     <div className="flex items-center justify-between text-xs border-b border-[#E6DED1] pb-2">
