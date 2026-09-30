@@ -16,6 +16,7 @@ import AssetLibrary from './pages/AssetLibrary';
 import ShareProduct from './pages/ShareProduct';
 import SocialFactory from './pages/SocialFactory';
 import VideoPipeline from './pages/VideoPipeline';
+import KlingVideoGenerator from './pages/KlingVideoGenerator';
 
 export default function App() {
   return (
@@ -62,6 +63,7 @@ export default function App() {
             <Route path="/assets" element={<AssetLibrary />} />
             <Route path="/social-factory" element={<SocialFactory />} />
             <Route path="/video-pipeline" element={<VideoPipeline />} />
+            <Route path="/kling-video" element={<KlingVideoGenerator />} />
           </Route>
 
           {/* Fallback Redirect */}

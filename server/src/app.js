@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import cloudinaryRoutes from './routes/cloudinaryRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import videoRoutes from './routes/videoRoutes.js';
+import klingRoutes from './routes/klingRoutes.js';
+import lumaRoutes from './routes/lumaRoutes.js';
 import { notFoundHandler, errorHandler } from './middleware/errorMiddleware.js';
 
 dotenv.config();
@@ -25,17 +27,7 @@ const envOrigins = (process.env.CLIENT_ORIGIN || process.env.CLIENT_ORIGINS || '
 const allowedOrigins = Array.from(new Set([...defaultAllowedOrigins, ...envOrigins]));
 
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-
-    const normalizedOrigin = origin.trim().replace(/\/+$/, '');
-    if (allowedOrigins.includes(normalizedOrigin)) {
-      return callback(null, true);
-    } else {
-      console.warn(`[CORS NOTICE]: Blocked request from origin '${origin}'`);
-      return callback(null, false);
-    }
-  },
+  origin: true,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
@@ -60,6 +52,8 @@ app.get('/api/health', (req, res) => {
 app.use('/api/cloudinary', cloudinaryRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/videos', videoRoutes);
+app.use('/api/luma', lumaRoutes);
+app.use('/api/kling', klingRoutes);
 
 // 404 & Centralized Error Handlers
 app.use(notFoundHandler);

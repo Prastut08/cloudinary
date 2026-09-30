@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Package, Grid, Image, Sparkles, Video, ChevronLeft, ChevronRight, LogOut, Flame } from 'lucide-react';
+import { Package, Grid, Image, Sparkles, Video, Clapperboard, ChevronLeft, ChevronRight, LogOut, Flame } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 function PremiumStudioLogo({ className = "w-4 h-4" }) {
@@ -46,6 +46,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }) {
     { label: 'Media Library', path: '/assets', icon: Image },
     { label: 'Content Factory', path: '/social-factory', icon: Sparkles },
     { label: 'Video Pipeline', path: '/video-pipeline', icon: Video },
+    { label: 'Luma Video Generator', path: '/kling-video', icon: Clapperboard },
   ];
 
   const sidebarContent = (
